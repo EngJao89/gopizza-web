@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { AxiosError } from "axios";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import api from "@/lib/axios";
+import { toast } from "@/lib/toast";
 
 type SignInFormData = {
   email: string;
@@ -12,9 +12,6 @@ type SignInFormData = {
 };
 
 export default function Home() {
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
-  const [isErrorMessage, setIsErrorMessage] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -22,19 +19,15 @@ export default function Home() {
   } = useForm<SignInFormData>();
 
   const onSubmit = async (data: SignInFormData) => {
-    setServerMessage(null);
-    setIsErrorMessage(false);
-
     try {
       await api.post("api/auth/login", data);
-      setServerMessage("Login realizado com sucesso.");
+      toast.success("Login realizado com sucesso.");
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       const message =
         axiosError.response?.data?.message ?? "Nao foi possivel realizar o login.";
 
-      setIsErrorMessage(true);
-      setServerMessage(message);
+      toast.error(message);
     }
   };
 
@@ -56,18 +49,6 @@ export default function Home() {
             <h1 className="mb-8 text-4xl font-semibold text-white">Login</h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {serverMessage && (
-                <p
-                  className={`rounded-md px-3 py-2 text-sm ${
-                    isErrorMessage
-                      ? "bg-red-950/40 text-red-100"
-                      : "bg-emerald-950/40 text-emerald-100"
-                  }`}
-                >
-                  {serverMessage}
-                </p>
-              )}
-
               <div>
                 <input
                   type="email"
