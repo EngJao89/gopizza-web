@@ -10,8 +10,9 @@ O **Go Pizza Web** é a interface front-end do sistema Go Pizza, voltada para o 
 
 **Estado atual**
 
-- Tela de **login** (`/`) com layout em duas metades: formulário e imagem de destaque em `public/`.
-- Integração com o backend via **Axios** no endpoint `api/auth/login` (POST com `email` e `password`).
+- Tela de **login** (`/`) e **cadastro** (`/signup`) com o mesmo layout em duas metades (formulário + imagem em `public/`).
+- **Login**: `POST api/auth/login` com `email` e `password`.
+- **Cadastro**: `POST api/auth/signup` com `email`, `name`, `phone`, `password`, `birthday` (ISO `YYYY-MM-DD`) e `cpf` (apenas dígitos no payload). Ajuste o path em `src/app/signup/page.tsx` se a API usar outro endpoint.
 - **Notificações globais** com `react-toastify` em qualquer Client Component.
 
 O projeto está preparado para evoluir com cardápio, carrinho e checkout.
@@ -65,8 +66,10 @@ npm run start
 ## API e configuração do cliente HTTP
 
 - Instância Axios em **`src/lib/axios.ts`**: `baseURL` e headers padrão (`Content-Type: application/json`).
-- **Login**: `POST` relativo à base → `api/auth/login`  
-  Corpo esperado (conforme uso no front): `{ "email": string, "password": string }`.
+- **Login**: `POST` → `api/auth/login`  
+  Corpo: `{ "email": string, "password": string }`.
+- **Cadastro**: `POST` → `api/auth/signup`  
+  Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 
 Ajuste `baseURL` conforme o ambiente (local, homologação, produção). Para múltiplos ambientes, o próximo passo natural é usar variáveis de ambiente (ex.: `NEXT_PUBLIC_API_URL`) e montar o `axios.create` a partir delas.
 
@@ -79,7 +82,7 @@ Ajuste `baseURL` conforme o ambiente (local, homologação, produção). Para m�
 - **TypeScript** — Tipagem estática e manutenção mais segura.
 - **Tailwind CSS v4** — Estilos utilitários com PostCSS; tema via variáveis em `globals.css` e suporte a dark mode por `prefers-color-scheme`.
 - **React Compiler** — Habilitado em `next.config.ts` para otimizações automáticas de render.
-- **React Hook Form** — Formulários com menos re-renders; validação declarativa no login.
+- **React Hook Form** — Formulários com menos re-renders; validação declarativa em login e cadastro.
 - **@hookform/resolvers** — Pronto para validação com Zod/Yup quando necessário.
 - **Axios** — Cliente HTTP centralizado (`src/lib/axios.ts`) para chamadas à API.
 - **react-toastify** — Toasts globais; container configurado em `Providers` e estilos importados em `globals.css`.
@@ -95,17 +98,24 @@ Ajuste `baseURL` conforme o ambiente (local, homologação, produção). Para m�
 
 ```
 gopizza-web/
-├── public/                 # Estáticos (ex.: imagem da tela de login)
+├── public/                 # Estáticos (ex.: imagem das telas de auth)
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx      # Layout raiz + <Providers>
-│   │   ├── page.tsx        # Página inicial (login — Client Component)
+│   │   ├── page.tsx        # Login (/) — Client Component
+│   │   ├── signup/
+│   │   │   ├── layout.tsx  # Metadata da rota de cadastro
+│   │   │   └── page.tsx    # Cadastro (/signup)
 │   │   └── globals.css     # Tailwind, React Toastify e tema
 │   ├── components/
+│   │   ├── auth/
+│   │   │   └── auth-split-layout.tsx  # Layout 50/50 compartilhado (login/signup)
 │   │   └── providers.tsx   # ToastContainer global (Client)
 │   └── lib/
 │       ├── axios.ts        # Instância Axios (baseURL da API)
-│       └── toast.ts        # Re-export de toast (uso app-wide)
+│       ├── toast.ts        # Re-export de toast (uso app-wide)
+│       └── validators/
+│           └── cpf.ts      # Validação de CPF no cadastro
 ├── next.config.ts
 ├── postcss.config.mjs
 ├── tsconfig.json           # Alias @/* → ./src/*
@@ -116,7 +126,7 @@ gopizza-web/
 
 - Rotas em `src/app/`.
 - **`layout.tsx`** (Server Component): metadata, fontes Geist, import de `globals.css` e envolvimento de `{children}` com **`Providers`** para disponibilizar toasts em toda a aplicação.
-- **`page.tsx`**: login com `"use client"` por causa de hooks (`useForm`) e chamadas à API no browser.
+- **`page.tsx`** (home) e **`signup/page.tsx`**: `"use client"` por hooks (`useForm`) e chamadas à API no browser. Navegação entre telas: link **Criar conta** (`/`) → `/signup`; **Ja tenho conta** → `/`.
 
 ### Toasts (aplicação inteira)
 
