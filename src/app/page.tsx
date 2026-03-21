@@ -2,6 +2,7 @@
 
 import { AxiosError } from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
 import api from "@/lib/axios";
@@ -13,6 +14,7 @@ type SignInFormData = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -23,6 +25,7 @@ export default function Home() {
     try {
       await api.post("api/auth/login", data);
       toast.success("Login realizado com sucesso.");
+      router.replace("/dashboard");
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       const message =
