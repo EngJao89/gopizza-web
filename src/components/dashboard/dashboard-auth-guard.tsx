@@ -1,6 +1,7 @@
 "use client";
 
 import { isAuthenticated } from "@/lib/auth";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useSyncExternalStore } from "react";
@@ -24,8 +25,8 @@ function getServerSnapshot() {
 function LoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#ecebea]">
-      <div
-        className="h-8 w-8 animate-spin rounded-full border-2 border-[#c93b44] border-t-transparent"
+      <Loader2
+        className="h-8 w-8 animate-spin text-[#c93b44]"
         aria-label="Carregando"
       />
     </div>
