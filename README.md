@@ -11,11 +11,12 @@ O **Go Pizza Web** é a interface front-end do sistema Go Pizza, voltada para o 
 **Estado atual**
 
 - Tela de **login** (`/`) e **cadastro** (`/signup`) com o mesmo layout em duas metades (formulário + imagem em `public/`).
-- **Login**: `POST api/auth/login` com `email` e `password`.
+- **Login**: `POST api/auth/login` com `email` e `password`. Em sucesso, redireciona para **`/dashboard`** (`router.replace`).
 - **Cadastro**: `POST api/auth/signup` com `email`, `name`, `phone`, `password`, `birthday` (ISO `YYYY-MM-DD`) e `cpf` (apenas dígitos no payload). Ajuste o path em `src/app/signup/page.tsx` se a API usar outro endpoint.
 - **Notificações globais** com `react-toastify` em qualquer Client Component.
+- **Dashboard garçom** (`/dashboard`): header vermelho (“Olá, Garçom”), busca com botão verde, lista **Cardápio** com fotos (Unsplash), navegação inferior **Cardápio** / **Pedidos** (`/dashboard/pedidos` — placeholder). Tipografia serif (**Playfair Display**) nas rotas sob `dashboard/`.
 
-O projeto está preparado para evoluir com cardápio, carrinho e checkout.
+O projeto está preparado para evoluir com cardápio dinâmico (API), carrinho e checkout.
 
 ---
 
@@ -106,10 +107,16 @@ gopizza-web/
 │   │   ├── signup/
 │   │   │   ├── layout.tsx  # Metadata da rota de cadastro
 │   │   │   └── page.tsx    # Cadastro (/signup)
+│   │   ├── dashboard/
+│   │   │   ├── layout.tsx  # Fundo + Playfair (garçom)
+│   │   │   ├── page.tsx    # Cardápio (/dashboard)
+│   │   │   └── pedidos/page.tsx  # Placeholder (/dashboard/pedidos)
 │   │   └── globals.css     # Tailwind, React Toastify e tema
 │   ├── components/
 │   │   ├── auth/
 │   │   │   └── auth-split-layout.tsx  # Layout 50/50 compartilhado (login/signup)
+│   │   ├── dashboard/
+│   │   │   └── dashboard-bottom-nav.tsx  # Tabs Cardápio / Pedidos
 │   │   └── providers.tsx   # ToastContainer global (Client)
 │   └── lib/
 │       ├── axios.ts        # Instância Axios (baseURL da API)
@@ -127,6 +134,7 @@ gopizza-web/
 - Rotas em `src/app/`.
 - **`layout.tsx`** (Server Component): metadata, fontes Geist, import de `globals.css` e envolvimento de `{children}` com **`Providers`** para disponibilizar toasts em toda a aplicação.
 - **`page.tsx`** (home) e **`signup/page.tsx`**: `"use client"` por hooks (`useForm`) e chamadas à API no browser. Navegação entre telas: link **Criar conta** (`/`) → `/signup`; **Ja tenho conta** → `/`.
+- **`dashboard/page.tsx`**: `"use client"` (busca no cardápio). Imagens de pizza via `next/image` e domínio `images.unsplash.com` em `next.config.ts` (`remotePatterns`).
 
 ### Toasts (aplicação inteira)
 
