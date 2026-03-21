@@ -74,6 +74,7 @@ npm run start
 - **Cadastro**: `POST` → `api/auth/signup`  
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 - **Logout**: `POST` → `api/auth/logout` (opcional no backend; o front sempre limpa a sessão local).
+- **Cardápio (dashboard)**: `GET` → `api/pizza-flavors` — lista normalizada em `src/lib/pizza-flavors.ts` (aceita array direto ou envelope `data` / `items` / `content` / etc.; campos: `id`, `name`, `description`, imagem em `image` / `imageUrl` / `photo` / `picture`, URLs relativas resolvidas com a base da API).
 
 Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta (copie de `.env.example`). Em local, use **`http://`** se a API não tiver TLS; **`https://`** só quando o backend realmente servir HTTPS (com certificado válido).
 
@@ -126,6 +127,7 @@ gopizza-web/
 │       ├── axios.ts        # Instância Axios + Bearer
 │       ├── auth.ts         # Token / sessão e parse do login
 │       ├── logout.ts       # POST logout + clearAuth
+│       ├── pizza-flavors.ts # Normaliza GET api/pizza-flavors → UI
 │       ├── toast.ts        # Re-export de toast (uso app-wide)
 │       └── validators/
 │           └── cpf.ts      # Validação de CPF no cadastro
