@@ -1,7 +1,10 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { logoutFromApp } from "@/lib/logout";
+import { toast } from "@/lib/toast";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 const MENU_ITEMS = [
@@ -97,7 +100,20 @@ function ChevronRightIcon() {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logoutFromApp();
+      toast.success("Voce saiu do sistema.");
+      router.replace("/");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -110,9 +126,8 @@ export default function DashboardPage() {
   }, [query]);
 
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col pb-24">
-      {/* Header */}
-      <header className="relative z-10 flex shrink-0 items-center justify-between bg-[#c93b44] px-4 pb-14 pt-4 md:px-8 md:pb-16">
+    <div className="relative flex min-h-screen w-full flex-col pb-24">
+      <header className="relative z-10 flex w-full shrink-0 items-center justify-between bg-[#c93b44] px-4 pb-14 pt-4 md:px-8 md:pb-16">
         <div className="flex items-center gap-3">
           <span
             className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f5d547] text-2xl shadow-sm"
@@ -126,16 +141,19 @@ export default function DashboardPage() {
         </div>
         <button
           type="button"
-          className="rounded-lg p-2 text-white transition hover:bg-white/10"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="rounded-lg p-2 text-white transition hover:bg-white/10 disabled:opacity-50"
           aria-label="Sair"
         >
           <LogoutIcon />
         </button>
       </header>
 
-      {/* Search — sobreposta ao header e ao corpo */}
-      <div className="relative z-20 -mt-10 px-4 md:-mt-12 md:px-8">
-        <div className="flex gap-2 rounded-xl bg-white p-1.5 shadow-md">
+      {/* Search — sobreposta ao header e ao corpo (largura limitada ao centro) */}
+      <div className="relative z-20 -mt-10 w-full px-4 md:-mt-12 md:px-8">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex gap-2 rounded-xl bg-white p-1.5 shadow-md">
           <div className="relative min-w-0 flex-1">
             <input
               type="search"
@@ -163,10 +181,11 @@ export default function DashboardPage() {
             <SearchIcon />
           </button>
         </div>
+        </div>
       </div>
 
       {/* Conteúdo */}
-      <main className="mt-6 flex-1 px-4 md:px-8">
+      <main className="mx-auto mt-6 w-full max-w-5xl flex-1 px-4 md:px-8">
         <div className="rounded-t-xl bg-white px-4 pb-6 pt-2 shadow-sm md:px-6">
           <div className="flex items-baseline justify-between border-b border-[#e8e4e2] pb-3 pt-2">
             <h2 className="font-serif text-2xl font-semibold text-[#3d2c29]">

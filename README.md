@@ -11,7 +11,9 @@ O **Go Pizza Web** é a interface front-end do sistema Go Pizza, voltada para o 
 **Estado atual**
 
 - Tela de **login** (`/`) e **cadastro** (`/signup`) com o mesmo layout em duas metades (formulário + imagem em `public/`).
-- **Login**: `POST api/auth/login` com `email` e `password`. Em sucesso, redireciona para **`/dashboard`** (`router.replace`).
+- **Login**: `POST api/auth/login` com `email` e `password`. Em sucesso, persiste **JWT** em `localStorage` (se a resposta trouxer `accessToken` / `token` / etc.) ou marca sessão em `sessionStorage`; redireciona para **`/dashboard`**. O Axios envia **`Authorization: Bearer`** quando há token.
+- **Logout**: `POST api/auth/logout` (com Bearer se existir token), limpa armazenamento local e redireciona para **`/`**. Botão no header do dashboard.
+- **Rotas `/dashboard/*`**: protegidas por **`DashboardAuthGuard`** — sem sessão/token, redireciona ao login.
 - **Cadastro**: `POST api/auth/signup` com `email`, `name`, `phone`, `password`, `birthday` (ISO `YYYY-MM-DD`) e `cpf` (apenas dígitos no payload). Ajuste o path em `src/app/signup/page.tsx` se a API usar outro endpoint.
 - **Notificações globais** com `react-toastify` em qualquer Client Component.
 - **Dashboard garçom** (`/dashboard`): header vermelho (“Olá, Garçom”), busca com botão verde, lista **Cardápio** com fotos (Unsplash), navegação inferior **Cardápio** / **Pedidos** (`/dashboard/pedidos` — placeholder). Tipografia serif (**Playfair Display**) nas rotas sob `dashboard/`.
@@ -71,6 +73,7 @@ npm run start
   Corpo: `{ "email": string, "password": string }`.
 - **Cadastro**: `POST` → `api/auth/signup`  
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
+- **Logout**: `POST` → `api/auth/logout` (opcional no backend; o front sempre limpa a sessão local).
 
 Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta (copie de `.env.example`). Em local, use **`http://`** se a API não tiver TLS; **`https://`** só quando o backend realmente servir HTTPS (com certificado válido).
 
@@ -85,7 +88,7 @@ Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta
 - **React Compiler** — Habilitado em `next.config.ts` para otimizações automáticas de render.
 - **React Hook Form** — Formulários com menos re-renders; validação declarativa em login e cadastro.
 - **@hookform/resolvers** — Pronto para validação com Zod/Yup quando necessário.
-- **Axios** — Cliente HTTP centralizado (`src/lib/axios.ts`) para chamadas à API.
+- **Axios** — Cliente HTTP centralizado (`src/lib/axios.ts`) com interceptor de **Bearer**; **`src/lib/auth.ts`** (token/sessão) e **`src/lib/logout.ts`** (saída).
 - **react-toastify** — Toasts globais; container configurado em `Providers` e estilos importados em `globals.css`.
 - **ESLint + eslint-config-next** — Qualidade e boas práticas alinhadas ao Next.js.
 - **Commitizen + cz-conventional-changelog** — Commits padronizados.
@@ -116,10 +119,13 @@ gopizza-web/
 │   │   ├── auth/
 │   │   │   └── auth-split-layout.tsx  # Layout 50/50 compartilhado (login/signup)
 │   │   ├── dashboard/
-│   │   │   └── dashboard-bottom-nav.tsx  # Tabs Cardápio / Pedidos
+│   │   │   ├── dashboard-bottom-nav.tsx  # Tabs Cardápio / Pedidos
+│   │   │   └── dashboard-auth-guard.tsx  # Redireciona se não autenticado
 │   │   └── providers.tsx   # ToastContainer global (Client)
 │   └── lib/
-│       ├── axios.ts        # Instância Axios (baseURL da API)
+│       ├── axios.ts        # Instância Axios + Bearer
+│       ├── auth.ts         # Token / sessão e parse do login
+│       ├── logout.ts       # POST logout + clearAuth
 │       ├── toast.ts        # Re-export de toast (uso app-wide)
 │       └── validators/
 │           └── cpf.ts      # Validação de CPF no cadastro
