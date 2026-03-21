@@ -1,42 +1,16 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import api from "@/lib/axios";
 import { logoutFromApp } from "@/lib/logout";
+import {
+  normalizePizzaFlavorsResponse,
+  type PizzaFlavorCard,
+} from "@/lib/pizza-flavors";
 import { toast } from "@/lib/toast";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-
-const MENU_ITEMS = [
-  {
-    id: "1",
-    name: "Margherita",
-    description: "Mussarela, manjericão fresco, parmesão e tomate.",
-    image:
-      "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&h=200&fit=crop",
-  },
-  {
-    id: "2",
-    name: "4 Queijos",
-    description: "Mussarela, provolone, parmesão e gorgonzola.",
-    image:
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop",
-  },
-  {
-    id: "3",
-    name: "Portuguesa",
-    description: "Calabresa, ovo e pimentão cobertos com mussarela.",
-    image:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=200&fit=crop",
-  },
-  {
-    id: "4",
-    name: "Lombinho",
-    description: "Mussarela, lombo, requeijão e catupiry.",
-    image:
-      "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=200&h=200&fit=crop",
-  },
-] as const;
+import { useEffect, useMemo, useState } from "react";
 
 function LogoutIcon() {
   return (
@@ -103,6 +77,35 @@ export default function DashboardPage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [menuItems, setMenuItems] = useState<PizzaFlavorCard[]>([]);
+  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await api.get<unknown>("api/pizza-flavors");
+        const list = normalizePizzaFlavorsResponse(data);
+        if (!cancelled) {
+          setMenuItems(list);
+          setLoadStatus("ready");
+        }
+      } catch {
+        if (!cancelled) {
+          setLoadStatus("error");
+          setMenuItems([]);
+          toast.error("Nao foi possivel carregar o cardapio.");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -117,13 +120,18 @@ export default function DashboardPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return MENU_ITEMS;
-    return MENU_ITEMS.filter(
+    if (!q) return menuItems;
+    return menuItems.filter(
       (item) =>
         item.name.toLowerCase().includes(q) ||
         item.description.toLowerCase().includes(q),
     );
-  }, [query]);
+  }, [query, menuItems]);
+
+  let countLabel = "…";
+  if (loadStatus !== "loading") {
+    countLabel = `${filtered.length} ${filtered.length === 1 ? "pizza" : "pizzas"}`;
+  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col pb-24">
@@ -154,33 +162,33 @@ export default function DashboardPage() {
       <div className="relative z-20 -mt-10 w-full px-4 md:-mt-12 md:px-8">
         <div className="mx-auto max-w-5xl">
           <div className="flex gap-2 rounded-xl bg-white p-1.5 shadow-md">
-          <div className="relative min-w-0 flex-1">
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar pizza..."
-              className="w-full rounded-lg bg-white py-3 pl-4 pr-10 text-[#3d2c29] placeholder:text-[#9a8f8c] outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30"
-            />
-            {query ? (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#9a8f8c] hover:bg-[#f0eeed] hover:text-[#3d2c29]"
-                aria-label="Limpar busca"
-              >
-                ×
-              </button>
-            ) : null}
+            <div className="relative min-w-0 flex-1">
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar pizza..."
+                className="w-full rounded-lg bg-white py-3 pl-4 pr-10 text-[#3d2c29] placeholder:text-[#9a8f8c] outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30"
+              />
+              {query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#9a8f8c] hover:bg-[#f0eeed] hover:text-[#3d2c29]"
+                  aria-label="Limpar busca"
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
+            <button
+              type="button"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2d8a54] text-white shadow-sm transition hover:bg-[#257347]"
+              aria-label="Buscar"
+            >
+              <SearchIcon />
+            </button>
           </div>
-          <button
-            type="button"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2d8a54] text-white shadow-sm transition hover:bg-[#257347]"
-            aria-label="Buscar"
-          >
-            <SearchIcon />
-          </button>
-        </div>
         </div>
       </div>
 
@@ -191,46 +199,64 @@ export default function DashboardPage() {
             <h2 className="font-serif text-2xl font-semibold text-[#3d2c29]">
               Cardápio
             </h2>
-            <span className="text-sm text-[#8a7d79]">
-              {filtered.length} {filtered.length === 1 ? "pizza" : "pizzas"}
-            </span>
+            <span className="text-sm text-[#8a7d79]">{countLabel}</span>
           </div>
 
-          <ul className="divide-y divide-[#ecebea]">
-            {filtered.map((item) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  className="flex w-full items-center gap-4 py-4 text-left transition hover:bg-[#faf9f9]"
-                >
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
-                    <Image
-                      src={item.image}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-serif text-lg font-semibold text-[#3d2c29]">
-                      {item.name}
-                    </p>
-                    <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-[#6b5e5a]">
-                      {item.description}
-                    </p>
-                  </div>
-                  <ChevronRightIcon />
-                </button>
-              </li>
-            ))}
-          </ul>
+          {loadStatus === "loading" && (
+            <div className="flex justify-center py-16">
+              <div
+                className="h-10 w-10 animate-spin rounded-full border-2 border-[#c93b44] border-t-transparent"
+                aria-label="Carregando cardapio"
+              />
+            </div>
+          )}
 
-          {filtered.length === 0 ? (
+          {loadStatus === "error" && (
             <p className="py-8 text-center text-[#8a7d79]">
-              Nenhuma pizza encontrada.
+              Erro ao carregar o cardapio. Tente novamente mais tarde.
             </p>
-          ) : null}
+          )}
+
+          {loadStatus === "ready" && (
+            <>
+              <ul className="divide-y divide-[#ecebea]">
+                {filtered.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-4 py-4 text-left transition hover:bg-[#faf9f9]"
+                    >
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
+                        <Image
+                          src={item.image}
+                          alt=""
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-serif text-lg font-semibold text-[#3d2c29]">
+                          {item.name}
+                        </p>
+                        <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-[#6b5e5a]">
+                          {item.description}
+                        </p>
+                      </div>
+                      <ChevronRightIcon />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {filtered.length === 0 ? (
+                <p className="py-8 text-center text-[#8a7d79]">
+                  Nenhuma pizza encontrada.
+                </p>
+              ) : null}
+            </>
+          )}
         </div>
       </main>
 
