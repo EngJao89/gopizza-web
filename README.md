@@ -25,7 +25,7 @@ O projeto está preparado para evoluir com cardápio, carrinho e checkout.
 
 - **Node.js** 18.x ou superior
 - **npm**, **yarn**, **pnpm** ou **bun**
-- Backend da API acessível na URL configurada em `src/lib/axios.ts` (por padrão `https://localhost:8080/`), com certificado válido em desenvolvimento se usar HTTPS
+- Backend da API acessível na URL em `src/lib/axios.ts`: padrão **`http://localhost:8080/`** (HTTP em local evita `ERR_SSL_PROTOCOL_ERROR` se o servidor não usar HTTPS). Sobrescreva com `NEXT_PUBLIC_API_URL` (veja `.env.example`).
 
 ### Instalação
 
@@ -65,13 +65,13 @@ npm run start
 
 ## API e configuração do cliente HTTP
 
-- Instância Axios em **`src/lib/axios.ts`**: `baseURL` e headers padrão (`Content-Type: application/json`).
+- Instância Axios em **`src/lib/axios.ts`**: `baseURL` (padrão `http://localhost:8080/` ou `NEXT_PUBLIC_API_URL`) e headers (`Content-Type: application/json`).
 - **Login**: `POST` → `api/auth/login`  
   Corpo: `{ "email": string, "password": string }`.
 - **Cadastro**: `POST` → `api/auth/signup`  
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 
-Ajuste `baseURL` conforme o ambiente (local, homologação, produção). Para múltiplos ambientes, o próximo passo natural é usar variáveis de ambiente (ex.: `NEXT_PUBLIC_API_URL`) e montar o `axios.create` a partir delas.
+Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta (copie de `.env.example`). Em local, use **`http://`** se a API não tiver TLS; **`https://`** só quando o backend realmente servir HTTPS (com certificado válido).
 
 ---
 
