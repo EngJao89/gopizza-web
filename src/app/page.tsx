@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
+import {
+  extractTokenFromLoginResponse,
+  markSessionAuthenticated,
+  setAuthToken,
+} from "@/lib/auth";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 
@@ -23,7 +28,13 @@ export default function Home() {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      await api.post("api/auth/login", data);
+      const { data: body } = await api.post("api/auth/login", data);
+      const token = extractTokenFromLoginResponse(body);
+      if (token) {
+        setAuthToken(token);
+      } else {
+        markSessionAuthenticated();
+      }
       toast.success("Login realizado com sucesso.");
       router.replace("/dashboard");
     } catch (error) {
