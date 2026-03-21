@@ -8,70 +8,10 @@ import {
   type PizzaFlavorCard,
 } from "@/lib/pizza-flavors";
 import { toast } from "@/lib/toast";
+import { ChevronRight, Loader2, LogOut, Search, Smile } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-
-function LogoutIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" x2="9" y1="12" y2="12" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-[#b8b0ad]"
-      aria-hidden
-    >
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -137,11 +77,12 @@ export default function DashboardPage() {
     <div className="relative flex min-h-screen w-full flex-col pb-24">
       <header className="relative z-10 flex w-full shrink-0 items-center justify-between bg-[#c93b44] px-4 pb-14 pt-4 md:px-8 md:pb-16">
         <div className="flex items-center gap-3">
-          <span
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f5d547] text-2xl shadow-sm"
-            aria-hidden
-          >
-            😊
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f5d547] shadow-sm">
+            <Smile
+              className="h-7 w-7 text-[#8b6914]"
+              strokeWidth={2}
+              aria-hidden
+            />
           </span>
           <h1 className="font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
             Olá, Garçom
@@ -154,7 +95,7 @@ export default function DashboardPage() {
           className="rounded-lg p-2 text-white transition hover:bg-white/10 disabled:opacity-50"
           aria-label="Sair"
         >
-          <LogoutIcon />
+          <LogOut className="h-[22px] w-[22px]" aria-hidden />
         </button>
       </header>
 
@@ -186,7 +127,7 @@ export default function DashboardPage() {
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2d8a54] text-white shadow-sm transition hover:bg-[#257347]"
               aria-label="Buscar"
             >
-              <SearchIcon />
+              <Search className="h-5 w-5" strokeWidth={2.5} aria-hidden />
             </button>
           </div>
         </div>
@@ -204,8 +145,8 @@ export default function DashboardPage() {
 
           {loadStatus === "loading" && (
             <div className="flex justify-center py-16">
-              <div
-                className="h-10 w-10 animate-spin rounded-full border-2 border-[#c93b44] border-t-transparent"
+              <Loader2
+                className="h-10 w-10 animate-spin text-[#c93b44]"
                 aria-label="Carregando cardapio"
               />
             </div>
@@ -244,7 +185,10 @@ export default function DashboardPage() {
                           {item.description}
                         </p>
                       </div>
-                      <ChevronRightIcon />
+                      <ChevronRight
+                        className="h-[18px] w-[18px] shrink-0 text-[#b8b0ad]"
+                        aria-hidden
+                      />
                     </button>
                   </li>
                 ))}

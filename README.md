@@ -91,6 +91,7 @@ Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta
 - **@hookform/resolvers** — Pronto para validação com Zod/Yup quando necessário.
 - **Axios** — Cliente HTTP centralizado (`src/lib/axios.ts`) com interceptor de **Bearer**; **`src/lib/auth.ts`** (token/sessão) e **`src/lib/logout.ts`** (saída).
 - **react-toastify** — Toasts globais; container configurado em `Providers` e estilos importados em `globals.css`.
+- **lucide-react** — Ícones SVG (dashboard: sair, busca, chevron, loading; guard de autenticação).
 - **ESLint + eslint-config-next** — Qualidade e boas práticas alinhadas ao Next.js.
 - **Commitizen + cz-conventional-changelog** — Commits padronizados.
 - **Fontes** — Geist (Sans e Mono) via `next/font`.
