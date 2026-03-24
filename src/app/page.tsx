@@ -7,8 +7,10 @@ import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
 import {
   extractTokenFromLoginResponse,
+  extractUserNameFromLoginResponse,
   markSessionAuthenticated,
   setAuthToken,
+  setUserName,
 } from "@/lib/auth";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
@@ -30,10 +32,14 @@ export default function Home() {
     try {
       const { data: body } = await api.post("api/auth/login", data);
       const token = extractTokenFromLoginResponse(body);
+      const userName = extractUserNameFromLoginResponse(body);
       if (token) {
         setAuthToken(token);
       } else {
         markSessionAuthenticated();
+      }
+      if (userName) {
+        setUserName(userName);
       }
       toast.success("Login realizado com sucesso.");
       router.replace("/dashboard");
