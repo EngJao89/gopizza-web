@@ -10,6 +10,7 @@ import {
 import { toast } from "@/lib/toast";
 import { ChevronRight, Loader2, LogOut, Search, Smile } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -163,8 +164,8 @@ export default function DashboardPage() {
               <ul className="divide-y divide-[#ecebea]">
                 {filtered.map((item) => (
                   <li key={item.id}>
-                    <button
-                      type="button"
+                    <Link
+                      href={`/dashboard/pizza/${item.id}`}
                       className="flex w-full items-center gap-4 py-4 text-left transition hover:bg-[#faf9f9]"
                     >
                       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
@@ -189,7 +190,7 @@ export default function DashboardPage() {
                         className="h-[18px] w-[18px] shrink-0 text-[#b8b0ad]"
                         aria-hidden
                       />
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
