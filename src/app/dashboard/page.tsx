@@ -2,6 +2,7 @@
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
 import api from "@/lib/axios";
+import { getUserName } from "@/lib/auth";
 import { logoutFromApp } from "@/lib/logout";
 import {
   normalizePizzaFlavorsResponse,
@@ -16,12 +17,20 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [userName, setUserName] = useState("");
   const [query, setQuery] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [menuItems, setMenuItems] = useState<PizzaFlavorCard[]>([]);
   const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
+
+  useEffect(() => {
+    const fromStorage = getUserName();
+    if (fromStorage) {
+      setUserName(fromStorage);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,7 +95,7 @@ export default function DashboardPage() {
             />
           </span>
           <h1 className="font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
-            Olá, Garçom
+            Olá, {userName}
           </h1>
         </div>
         <button
