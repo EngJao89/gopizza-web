@@ -75,6 +75,7 @@ npm run start
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 - **Logout**: `POST` → `api/auth/logout` (opcional no backend; o front sempre limpa a sessão local).
 - **Cardápio (dashboard)**: `GET` → `api/pizza-flavors` — lista normalizada em `src/lib/pizza-flavors.ts` (aceita array direto ou envelope `data` / `items` / `content` / etc.; campos: `id`, `name`, `description`, imagem em `image` / `imageUrl` / `photo` / `picture`, URLs relativas resolvidas com a base da API).
+- **Detalhe da pizza**: `GET` → `api/pizza-flavors/:id` — tela **`/dashboard/pizza/[id]`**. Contrato esperado (exemplo): `name`, `description`, `imageUrl`, `sizesAndPrices` com chaves **`P` / `M` / `G`** (reais), `availableOptions` (lista de opcionais), `createdAt` / `updatedAt` (ISO). A normalização mapeia P/M/G para Pequena/Média/Grande na UI; opcionais aparecem em checkboxes; datas no rodapé do card.
 
 Use **`NEXT_PUBLIC_API_URL`** no `.env.local` para apontar para outro host/porta (copie de `.env.example`). Em local, use **`http://`** se a API não tiver TLS; **`https://`** só quando o backend realmente servir HTTPS (com certificado válido).
 
@@ -115,6 +116,7 @@ gopizza-web/
 │   │   ├── dashboard/
 │   │   │   ├── layout.tsx  # Fundo + Playfair (garçom)
 │   │   │   ├── page.tsx    # Cardápio (/dashboard)
+│   │   │   ├── pizza/[id]/page.tsx  # Detalhe da pizza
 │   │   │   └── pedidos/page.tsx  # Placeholder (/dashboard/pedidos)
 │   │   └── globals.css     # Tailwind, React Toastify e tema
 │   ├── components/
