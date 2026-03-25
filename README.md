@@ -17,7 +17,7 @@ O **Go Pizza Web** é a interface front-end do sistema Go Pizza, voltada para o 
 - **Rotas `/dashboard/*`**: protegidas por **`DashboardAuthGuard`** — sem sessão/token, redireciona ao login.
 - **Cadastro**: `POST api/auth/signup` com `email`, `name`, `phone`, `password`, `birthday` (ISO `YYYY-MM-DD`) e `cpf` (apenas dígitos no payload). Ajuste o path em `src/app/signup/page.tsx` se a API usar outro endpoint.
 - **Notificações globais** com `react-toastify` em qualquer Client Component.
-- **Dashboard garçom** (`/dashboard`): header vermelho (“Olá, Garçom”), busca com botão verde, lista **Cardápio** com fotos (Unsplash), navegação inferior **Cardápio** / **Pedidos** (`/dashboard/pedidos` — placeholder). Tipografia serif (**Playfair Display**) nas rotas sob `dashboard/`.
+- **Dashboard garçom** (`/dashboard`): header com nome/foto (`GET api/auth/me`), busca, lista **Cardápio**, detalhe em `/dashboard/pizza/[id]`, **Perfil** em `/dashboard/profile` (formulário somente leitura com dados de `api/auth/me`), **Pedidos** (`/dashboard/pedidos`). Navegação inferior: Cardápio / Pedidos / Perfil. Tipografia serif (**Playfair Display**) nas rotas sob `dashboard/`.
 
 O projeto está preparado para evoluir com cardápio dinâmico (API), carrinho e checkout.
 
@@ -72,7 +72,7 @@ npm run start
 - Instância Axios em **`src/lib/axios.ts`**: `baseURL` (padrão `http://localhost:8080/` ou `NEXT_PUBLIC_API_URL`) e headers (`Content-Type: application/json`).
 - **Login**: `POST` → `api/auth/login`  
   Corpo: `{ "email": string, "password": string }`.
-- **Perfil (me)**: `GET` → `api/auth/me` — header `Authorization: Bearer <token>`; resposta normalizada para nome e foto (`photoUrl`, `imageUrl`, `avatar`, etc.).
+- **Perfil (me)**: `GET` → `api/auth/me` — header `Authorization: Bearer <token>`. Uso no app: **header do dashboard** (nome + foto opcional via `normalizeMeResponse`) e **página de perfil** (`normalizeMeProfile`: `id`, `name`, `email`, `phone`, `cpf`, `birthday`, `createdAt`, `updatedAt`).
 - **Cadastro**: `POST` → `api/auth/signup`  
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 - **Logout**: `POST` → `api/auth/logout` (opcional no backend; o front sempre limpa a sessão local).
@@ -119,6 +119,7 @@ gopizza-web/
 │   │   │   ├── layout.tsx  # Fundo + Playfair (garçom)
 │   │   │   ├── page.tsx    # Cardápio (/dashboard)
 │   │   │   ├── pizza/[id]/page.tsx  # Detalhe da pizza
+│   │   │   ├── profile/           # Perfil (GET /me)
 │   │   │   └── pedidos/page.tsx  # Placeholder (/dashboard/pedidos)
 │   │   └── globals.css     # Tailwind, React Toastify e tema
 │   ├── components/
