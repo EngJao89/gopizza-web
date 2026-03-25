@@ -12,6 +12,7 @@ O **Go Pizza Web** é a interface front-end do sistema Go Pizza, voltada para o 
 
 - Tela de **login** (`/`) e **cadastro** (`/signup`) com o mesmo layout em duas metades (formulário + imagem em `public/`).
 - **Login**: `POST api/auth/login` com `email` e `password`. Em sucesso, persiste **JWT** em `localStorage` (se a resposta trouxer `accessToken` / `token` / etc.) ou marca sessão em `sessionStorage`; redireciona para **`/dashboard`**. O Axios envia **`Authorization: Bearer`** quando há token.
+- **Usuário logado**: `GET api/auth/me` com **Bearer** — no dashboard, carrega **nome** e **foto** para o header (normalização em `src/lib/current-user.ts`; URL de imagem relativa usa a mesma base da API).
 - **Logout**: `POST api/auth/logout` (com Bearer se existir token), limpa armazenamento local e redireciona para **`/`**. Botão no header do dashboard.
 - **Rotas `/dashboard/*`**: protegidas por **`DashboardAuthGuard`** — sem sessão/token, redireciona ao login.
 - **Cadastro**: `POST api/auth/signup` com `email`, `name`, `phone`, `password`, `birthday` (ISO `YYYY-MM-DD`) e `cpf` (apenas dígitos no payload). Ajuste o path em `src/app/signup/page.tsx` se a API usar outro endpoint.
@@ -71,6 +72,7 @@ npm run start
 - Instância Axios em **`src/lib/axios.ts`**: `baseURL` (padrão `http://localhost:8080/` ou `NEXT_PUBLIC_API_URL`) e headers (`Content-Type: application/json`).
 - **Login**: `POST` → `api/auth/login`  
   Corpo: `{ "email": string, "password": string }`.
+- **Perfil (me)**: `GET` → `api/auth/me` — header `Authorization: Bearer <token>`; resposta normalizada para nome e foto (`photoUrl`, `imageUrl`, `avatar`, etc.).
 - **Cadastro**: `POST` → `api/auth/signup`  
   Corpo: `{ "email", "name", "phone", "password", "birthday", "cpf" }` (telefone e CPF enviados só com dígitos).
 - **Logout**: `POST` → `api/auth/logout` (opcional no backend; o front sempre limpa a sessão local).
@@ -129,6 +131,7 @@ gopizza-web/
 │   └── lib/
 │       ├── axios.ts        # Instância Axios + Bearer
 │       ├── auth.ts         # Token / sessão e parse do login
+│       ├── current-user.ts # Normaliza GET api/auth/me
 │       ├── logout.ts       # POST logout + clearAuth
 │       ├── pizza-flavors.ts # Normaliza GET api/pizza-flavors → UI
 │       ├── toast.ts        # Re-export de toast (uso app-wide)
