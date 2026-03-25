@@ -6,6 +6,18 @@ export type CurrentUser = {
   photoUrl: string | null;
 };
 
+/** Perfil completo retornado por GET api/auth/me (contrato plano). */
+export type MeProfile = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  cpf: string;
+  birthday: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== "object") return null;
   return value as Record<string, unknown>;
@@ -63,4 +75,35 @@ export function normalizeMeResponse(data: unknown): CurrentUser | null {
   }
 
   return null;
+}
+
+function asTrimmedString(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.trim();
+}
+
+/**
+ * Normaliza GET api/auth/me para o formulário de perfil (objeto plano).
+ */
+export function normalizeMeProfile(data: unknown): MeProfile | null {
+  const root = asRecord(data);
+  if (!root) return null;
+
+  const flat =
+    asRecord(root.data) ?? asRecord(root.user) ?? root;
+
+  const id = asTrimmedString(flat.id);
+  const name = asTrimmedString(flat.name);
+  if (!id || !name) return null;
+
+  return {
+    id,
+    name,
+    email: asTrimmedString(flat.email),
+    phone: asTrimmedString(flat.phone),
+    cpf: asTrimmedString(flat.cpf),
+    birthday: asTrimmedString(flat.birthday),
+    createdAt: asTrimmedString(flat.createdAt),
+    updatedAt: asTrimmedString(flat.updatedAt),
+  };
 }
