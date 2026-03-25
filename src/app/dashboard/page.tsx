@@ -2,7 +2,8 @@
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
 import api from "@/lib/axios";
-import { getUserName } from "@/lib/auth";
+import { getToken, getUserName, setUserName } from "@/lib/auth";
+import { normalizeMeResponse } from "@/lib/current-user";
 import { logoutFromApp } from "@/lib/logout";
 import {
   normalizePizzaFlavorsResponse,
@@ -17,7 +18,8 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [userName, setUserName] = useState("");
+  const [displayName, setDisplayName] = useState("Garçom");
+  const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [menuItems, setMenuItems] = useState<PizzaFlavorCard[]>([]);
@@ -28,8 +30,32 @@ export default function DashboardPage() {
   useEffect(() => {
     const fromStorage = getUserName();
     if (fromStorage) {
-      setUserName(fromStorage);
+      setDisplayName(fromStorage);
     }
+  }, []);
+
+  useEffect(() => {
+    if (!getToken()) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await api.get<unknown>("api/auth/me");
+        const user = normalizeMeResponse(data);
+        if (!cancelled && user) {
+          setDisplayName(user.name);
+          setUserPhotoUrl(user.photoUrl);
+          setUserName(user.name);
+        }
+      } catch {
+        // Mantém nome do login / localStorage
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -87,15 +113,26 @@ export default function DashboardPage() {
     <div className="relative flex min-h-screen w-full flex-col pb-24">
       <header className="relative z-10 flex w-full shrink-0 items-center justify-between bg-[#c93b44] px-4 pb-14 pt-4 md:px-8 md:pb-16">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f5d547] shadow-sm">
-            <Smile
-              className="h-7 w-7 text-[#8b6914]"
-              strokeWidth={2}
-              aria-hidden
-            />
+          <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#f5d547] shadow-sm">
+            {userPhotoUrl ? (
+              <Image
+                src={userPhotoUrl}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="44px"
+                unoptimized
+              />
+            ) : (
+              <Smile
+                className="h-7 w-7 text-[#8b6914]"
+                strokeWidth={2}
+                aria-hidden
+              />
+            )}
           </span>
-          <h1 className="font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
-            Olá, {userName}
+          <h1 className="min-w-0 font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
+            Olá, {displayName || "Garçom"}
           </h1>
         </div>
         <button
