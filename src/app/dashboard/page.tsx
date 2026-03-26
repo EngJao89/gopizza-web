@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { getToken, getUserName, setUserName } from "@/lib/auth";
 import { normalizeMeResponse } from "@/lib/current-user";
@@ -135,15 +136,17 @@ export default function DashboardPage() {
             Olá, {displayName || "Garçom"}
           </h1>
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="rounded-lg p-2 text-white transition hover:bg-white/10 disabled:opacity-50"
-          aria-label="Sair"
-        >
-          <LogOut className="h-[22px] w-[22px]" aria-hidden />
-        </button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="rounded-lg text-white hover:bg-white/10 disabled:opacity-50"
+            aria-label="Sair"
+          >
+            <LogOut className="h-[22px] w-[22px]" aria-hidden />
+          </Button>
       </header>
 
       {/* Search — sobreposta ao header e ao corpo (largura limitada ao centro) */}
@@ -159,23 +162,26 @@ export default function DashboardPage() {
                 className="w-full rounded-lg bg-white py-3 pl-4 pr-10 text-[#3d2c29] placeholder:text-[#9a8f8c] outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30"
               />
               {query ? (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#9a8f8c] hover:bg-[#f0eeed] hover:text-[#3d2c29]"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9a8f8c] hover:bg-[#f0eeed] hover:text-[#3d2c29]"
                   aria-label="Limpar busca"
                 >
                   ×
-                </button>
+                </Button>
               ) : null}
             </div>
-            <button
-              type="button"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[#2d8a54] text-white shadow-sm transition hover:bg-[#257347]"
-              aria-label="Buscar"
-            >
-              <Search className="h-5 w-5" strokeWidth={2.5} aria-hidden />
-            </button>
+          <Button
+            type="button"
+            size="icon"
+            className="h-12 w-12 shrink-0 rounded-lg bg-[#2d8a54] text-white shadow-sm hover:bg-[#257347]"
+            aria-label="Buscar"
+          >
+            <Search className="h-5 w-5" strokeWidth={2.5} aria-hidden />
+          </Button>
           </div>
         </div>
       </div>

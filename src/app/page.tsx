@@ -12,6 +12,7 @@ import {
   setAuthToken,
   setUserName,
 } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 
@@ -98,21 +99,22 @@ export default function Home() {
           >
             Criar conta
           </Link>
-          <button
+          <Button
             type="button"
-            className="text-base text-white/90 transition hover:text-white"
+            variant="ghost"
+            className="text-base text-white/90 hover:bg-white/10 hover:text-white"
           >
             Esqueci minha senha
-          </button>
+          </Button>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="mt-3 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-3 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? "Entrando..." : "Entrar"}
-        </button>
+        </Button>
       </form>
     </AuthSplitLayout>
   );

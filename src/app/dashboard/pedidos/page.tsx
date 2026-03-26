@@ -1,4 +1,5 @@
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function PedidosPage() {
@@ -12,12 +13,12 @@ export default function PedidosPage() {
           Tela de pedidos em construção. Use o menu inferior para voltar ao
           cardápio.
         </p>
-        <Link
-          href="/dashboard"
-          className="rounded-xl bg-[#c93b44] px-6 py-3 font-medium text-white transition hover:bg-[#b3343c]"
+        <Button
+          asChild
+          className="rounded-xl bg-[#c93b44] px-6 py-3 font-medium text-white hover:bg-[#b3343c]"
         >
-          Voltar ao cardápio
-        </Link>
+          <Link href="/dashboard">Voltar ao cardápio</Link>
+        </Button>
       </div>
       <DashboardBottomNav active="pedidos" />
     </div>

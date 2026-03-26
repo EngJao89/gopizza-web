@@ -4,6 +4,7 @@ import { AxiosError } from "axios";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 import { isValidCPF } from "@/lib/validators/cpf";
@@ -183,13 +184,13 @@ export default function SignUpPage() {
           </Link>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-2 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? "Cadastrando..." : "Cadastrar"}
-        </button>
+        </Button>
       </form>
     </AuthSplitLayout>
   );

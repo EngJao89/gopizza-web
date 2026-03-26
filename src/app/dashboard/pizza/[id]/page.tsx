@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import {
   normalizePizzaFlavorDetail,
@@ -123,12 +124,12 @@ export default function PizzaDetailPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#ecebea] px-4">
         <p className="text-center text-[#6b5e5a]">Pizza nao encontrada.</p>
-        <Link
-          href="/dashboard"
-          className="rounded-xl bg-[#c93b44] px-6 py-3 font-medium text-white"
+        <Button
+          asChild
+          className="rounded-xl bg-[#c93b44] px-6 py-3 font-medium text-white hover:bg-[#b3343c]"
         >
-          Voltar ao cardápio
-        </Link>
+          <Link href="/dashboard">Voltar ao cardápio</Link>
+        </Button>
       </div>
     );
   }
@@ -138,14 +139,16 @@ export default function PizzaDetailPage() {
       {/* Header vermelho + voltar */}
       <header className="relative bg-[#c93b44] px-4 pb-28 pt-4 md:px-8 md:pb-32">
         <div className="mx-auto flex max-w-lg items-start">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => router.back()}
-            className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 text-white transition hover:bg-white/30"
+            className="h-10 w-10 rounded-lg bg-white/20 text-white hover:bg-white/30"
             aria-label="Voltar"
           >
             <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
-          </button>
+          </Button>
         </div>
 
         {/* Imagem circular sobreposta */}
@@ -184,11 +187,12 @@ export default function PizzaDetailPage() {
               const selected = size === key;
               const unitPrice = detail.prices[key];
               return (
-                <button
+                <Button
                   key={key}
                   type="button"
+                  variant="outline"
                   onClick={() => setSize(key)}
-                  className={`flex flex-col items-center gap-1 rounded-xl border-2 px-2 py-3 text-center transition ${
+                  className={`h-auto min-h-[120px] w-full flex-col gap-1 rounded-xl border-2 px-2 py-3 text-center ${
                     selected
                       ? "border-[#2d8a54] bg-[#f0faf3]"
                       : "border-[#e8e4e2] bg-white hover:border-[#d4ccc8]"
@@ -222,7 +226,7 @@ export default function PizzaDetailPage() {
                   >
                     {formatBrl(unitPrice)}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -294,14 +298,14 @@ export default function PizzaDetailPage() {
             Total: {formatBrl(total)}
           </p>
 
-          <button
+          <Button
             type="button"
             disabled={submitting}
             onClick={handleConfirm}
-            className="mt-6 w-full rounded-xl bg-[#2d8a54] py-4 text-base font-semibold text-white transition hover:bg-[#257347] disabled:opacity-60"
+            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-base font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
           >
             {submitting ? "Confirmando..." : "Confirmar pedido"}
-          </button>
+          </Button>
 
           {(detail.createdAt || detail.updatedAt) && (
             <div className="mt-6 border-t border-[#ecebea] pt-4 text-xs text-[#8a7d79]">
