@@ -1,8 +1,9 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardHeader } from "../../components/dashboard/dashboard-header";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import { getToken, getUserName, setUserName } from "@/lib/auth";
 import { normalizeMeResponse } from "@/lib/current-user";
@@ -120,17 +121,16 @@ export default function DashboardPage() {
         onLogout={handleLogout}
       />
 
-      {/* Search — sobreposta ao header e ao corpo (largura limitada ao centro) */}
       <div className="relative z-20 -mt-10 w-full px-4 md:-mt-12 md:px-8">
         <div className="mx-auto max-w-5xl">
           <div className="flex gap-2 rounded-xl bg-white p-1.5 shadow-md">
             <div className="relative min-w-0 flex-1">
-              <input
+              <Input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Buscar pizza..."
-                className="w-full rounded-lg bg-white py-3 pl-4 pr-10 text-[#3d2c29] placeholder:text-[#9a8f8c] outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30"
+                className="h-auto w-full rounded-lg border-none bg-white py-3 pl-4 pr-10 text-[#3d2c29] shadow-none outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
               />
               {query ? (
                 <Button
@@ -157,7 +157,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Conteúdo */}
       <main className="mx-auto mt-6 w-full max-w-5xl flex-1 px-4 md:px-8">
         <div className="rounded-t-xl bg-white px-4 pb-6 pt-2 shadow-sm md:px-6">
           <div className="flex items-baseline justify-between border-b border-[#e8e4e2] pb-3 pt-2">
