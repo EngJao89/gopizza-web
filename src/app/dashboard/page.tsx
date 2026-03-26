@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Button } from "@/components/ui/button";
 import api from "@/lib/axios";
 import { getToken, getUserName, setUserName } from "@/lib/auth";
@@ -11,7 +12,7 @@ import {
   type PizzaFlavorCard,
 } from "@/lib/pizza-flavors";
 import { toast } from "@/lib/toast";
-import { ChevronRight, Loader2, LogOut, Search, Smile } from "lucide-react";
+import { ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -112,42 +113,12 @@ export default function DashboardPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col pb-24">
-      <header className="relative z-10 flex w-full shrink-0 items-center justify-between bg-[#c93b44] px-4 pb-14 pt-4 md:px-8 md:pb-16">
-        <div className="flex items-center gap-3">
-          <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#f5d547] shadow-sm">
-            {userPhotoUrl ? (
-              <Image
-                src={userPhotoUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="44px"
-                unoptimized
-              />
-            ) : (
-              <Smile
-                className="h-7 w-7 text-[#8b6914]"
-                strokeWidth={2}
-                aria-hidden
-              />
-            )}
-          </span>
-          <h1 className="min-w-0 font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
-            Olá, {displayName || "Garçom"}
-          </h1>
-        </div>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="rounded-lg text-white hover:bg-white/10 disabled:opacity-50"
-            aria-label="Sair"
-          >
-            <LogOut className="h-[22px] w-[22px]" aria-hidden />
-          </Button>
-      </header>
+      <DashboardHeader
+        displayName={displayName}
+        userPhotoUrl={userPhotoUrl}
+        isLoggingOut={isLoggingOut}
+        onLogout={handleLogout}
+      />
 
       {/* Search — sobreposta ao header e ao corpo (largura limitada ao centro) */}
       <div className="relative z-20 -mt-10 w-full px-4 md:-mt-12 md:px-8">

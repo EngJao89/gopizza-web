@@ -1,6 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import api from "@/lib/axios";
 import {
   normalizePizzaFlavorDetail,
@@ -139,16 +145,22 @@ export default function PizzaDetailPage() {
       {/* Header vermelho + voltar */}
       <header className="relative bg-[#c93b44] px-4 pb-28 pt-4 md:px-8 md:pb-32">
         <div className="mx-auto flex max-w-lg items-start">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
-            className="h-10 w-10 rounded-lg bg-white/20 text-white hover:bg-white/30"
-            aria-label="Voltar"
-          >
-            <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
-          </Button>
+          <NavigationMenu viewport={false} className="max-w-none">
+            <NavigationMenuList className="justify-start">
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <button
+                    type="button"
+                    onClick={() => router.back()}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border-0 bg-white/20 text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50"
+                    aria-label="Voltar"
+                  >
+                    <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
+                  </button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
 
         {/* Imagem circular sobreposta */}
