@@ -2,11 +2,13 @@
 
 import { AxiosError } from "axios";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 import { isValidCPF } from "@/lib/validators/cpf";
@@ -34,12 +36,37 @@ function onlyDigits(value: string): string {
   return value.replaceAll(/\D/g, "");
 }
 
+function parseIsoDateToLocal(isoDate: string): Date | undefined {
+  if (!isoDate) return undefined;
+  const [y, m, d] = isoDate.split("-");
+  if (!y || !m || !d) return undefined;
+  const dt = new Date(Number(y), Number(m) - 1, Number(d));
+  if (Number.isNaN(dt.getTime())) return undefined;
+  return dt;
+}
+
+function formatIsoDateToPtBr(isoDate: string): string {
+  const dt = parseIsoDateToLocal(isoDate);
+  if (!dt) return "";
+  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(dt);
+}
+
+function formatLocalDateToIso(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 export default function SignUpPage() {
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormData>();
+  const birthdayValue = useWatch({ control, name: "birthday" });
 
   const onSubmit = async (data: SignUpFormData) => {
     const payload: SignUpPayload = {
@@ -148,14 +175,32 @@ export default function SignUpPage() {
           >
             Data de nascimento
           </label>
-          <Input
-            id="signup-birthday"
-            type="date"
-            className={`${authFieldClassName} text-white scheme-dark h-auto`}
-            {...register("birthday", {
-              required: "Informe sua data de nascimento",
-            })}
-          />
+          <input type="hidden" {...register("birthday", { required: "Informe sua data de nascimento" })} />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Input
+                id="signup-birthday"
+                readOnly
+                placeholder="Selecione a data"
+                value={birthdayValue ? formatIsoDateToPtBr(birthdayValue) : ""}
+                className={`${authFieldClassName} text-white scheme-dark h-auto cursor-pointer`}
+                aria-label="Data de nascimento"
+              />
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={birthdayValue ? parseIsoDateToLocal(birthdayValue) : undefined}
+                onSelect={(date) => {
+                  if (!date) {
+                    setValue("birthday", "", { shouldValidate: true });
+                    return;
+                  }
+                  setValue("birthday", formatLocalDateToIso(date), { shouldValidate: true });
+                }}
+              />
+            </PopoverContent>
+          </Popover>
           {errors.birthday && (
             <p className="mt-2 text-sm text-amber-100">{errors.birthday.message}</p>
           )}
