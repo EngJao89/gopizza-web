@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 import { isValidCPF } from "@/lib/validators/cpf";
@@ -64,22 +65,26 @@ export default function SignUpPage() {
 
   return (
     <AuthSplitLayout title="Cadastro">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Input
-            type="text"
-            placeholder="Nome completo"
-            autoComplete="name"
-            className={`${authFieldClassName} h-auto`}
-            {...register("name", {
-              required: "Informe seu nome",
-              minLength: { value: 2, message: "Nome muito curto" },
-            })}
-          />
-          {errors.name && (
-            <p className="mt-2 text-sm text-amber-100">{errors.name.message}</p>
-          )}
-        </div>
+      <Card className="gap-4 bg-white/5 text-white shadow-none ring-1 ring-white/15 border border-white/15 py-0">
+        <CardContent className="px-0">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <Input
+                type="text"
+                placeholder="Nome completo"
+                autoComplete="name"
+                className={`${authFieldClassName} h-auto`}
+                {...register("name", {
+                  required: "Informe seu nome",
+                  minLength: { value: 2, message: "Nome muito curto" },
+                })}
+              />
+              {errors.name && (
+                <p className="mt-2 text-sm text-amber-100">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
 
         <div>
           <Input
@@ -184,14 +189,16 @@ export default function SignUpPage() {
           </Link>
         </div>
 
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="mt-2 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          {isSubmitting ? "Cadastrando..." : "Cadastrar"}
-        </Button>
-      </form>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-2 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </AuthSplitLayout>
   );
 }
