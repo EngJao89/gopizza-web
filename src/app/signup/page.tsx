@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-split-layout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 import { isValidCPF } from "@/lib/validators/cpf";
@@ -50,8 +51,7 @@ export default function SignUpPage() {
     };
 
     try {
-      // Ajuste se sua API usar outro path (ex.: api/users ou api/auth/register).
-      await api.post("api/auth/signup", payload);
+      await api.post("api/users", payload);
       toast.success("Conta criada com sucesso.");
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
@@ -66,11 +66,11 @@ export default function SignUpPage() {
     <AuthSplitLayout title="Cadastro">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <input
+          <Input
             type="text"
             placeholder="Nome completo"
             autoComplete="name"
-            className={authFieldClassName}
+            className={`${authFieldClassName} h-auto`}
             {...register("name", {
               required: "Informe seu nome",
               minLength: { value: 2, message: "Nome muito curto" },
@@ -82,11 +82,11 @@ export default function SignUpPage() {
         </div>
 
         <div>
-          <input
+          <Input
             type="email"
             placeholder="E-mail"
             autoComplete="email"
-            className={authFieldClassName}
+            className={`${authFieldClassName} h-auto`}
             {...register("email", {
               required: "Informe seu e-mail",
               pattern: {
@@ -101,11 +101,11 @@ export default function SignUpPage() {
         </div>
 
         <div>
-          <input
+          <Input
             type="tel"
             placeholder="Telefone"
             autoComplete="tel"
-            className={authFieldClassName}
+            className={`${authFieldClassName} h-auto`}
             {...register("phone", {
               required: "Informe seu telefone",
               validate: (v) =>
@@ -120,12 +120,12 @@ export default function SignUpPage() {
         </div>
 
         <div>
-          <input
+          <Input
             type="text"
             inputMode="numeric"
             placeholder="CPF"
             autoComplete="off"
-            className={authFieldClassName}
+            className={`${authFieldClassName} h-auto`}
             {...register("cpf", {
               required: "Informe seu CPF",
               validate: (v) => (isValidCPF(v) ? true : "CPF invalido"),
@@ -143,10 +143,10 @@ export default function SignUpPage() {
           >
             Data de nascimento
           </label>
-          <input
+          <Input
             id="signup-birthday"
             type="date"
-            className={`${authFieldClassName} text-white scheme-dark`}
+            className={`${authFieldClassName} text-white scheme-dark h-auto`}
             {...register("birthday", {
               required: "Informe sua data de nascimento",
             })}
@@ -157,11 +157,11 @@ export default function SignUpPage() {
         </div>
 
         <div>
-          <input
+          <Input
             type="password"
             placeholder="Senha"
             autoComplete="new-password"
-            className={authFieldClassName}
+            className={`${authFieldClassName} h-auto`}
             {...register("password", {
               required: "Informe sua senha",
               minLength: {

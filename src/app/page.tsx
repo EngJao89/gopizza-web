@@ -14,6 +14,7 @@ import {
 } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import { toast } from "@/lib/toast";
 
@@ -60,10 +61,10 @@ export default function Home() {
         <CardContent className="px-0">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <input
+              <Input
                 type="email"
                 placeholder="E-mail"
-                className={authFieldClassName}
+                className={`${authFieldClassName} h-auto`}
                 {...register("email", {
                   required: "Informe seu e-mail",
                   pattern: {
@@ -80,10 +81,10 @@ export default function Home() {
             </div>
 
             <div>
-              <input
+              <Input
                 type="password"
                 placeholder="Senha"
-                className={authFieldClassName}
+                className={`${authFieldClassName} h-auto`}
                 {...register("password", {
                   required: "Informe sua senha",
                   minLength: {
