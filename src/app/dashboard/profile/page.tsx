@@ -1,6 +1,12 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
 import api from "@/lib/axios";
 import {
   normalizeMeProfile,
@@ -86,13 +92,21 @@ export default function ProfilePage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#ecebea] pb-24">
       <header className="flex w-full items-center gap-3 border-b border-[#e0dcd9] bg-white px-4 py-4 shadow-sm md:px-8">
-        <Link
-          href="/dashboard"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-[#3d2c29] transition hover:bg-[#f5f3f2]"
-          aria-label="Voltar ao cardápio"
-        >
-          <ChevronLeft className="h-6 w-6" strokeWidth={2} />
-        </Link>
+        <NavigationMenu viewport={false}>
+          <NavigationMenuList className="flex-none justify-start gap-0">
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  href="/dashboard"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-[#3d2c29] hover:bg-[#f5f3f2]"
+                  aria-label="Voltar ao cardápio"
+                >
+                  <ChevronLeft className="h-6 w-6" strokeWidth={2} />
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
         <h1 className="font-serif text-xl font-semibold text-[#3d2c29] md:text-2xl">
           Meu perfil
         </h1>
