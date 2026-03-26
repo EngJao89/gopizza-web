@@ -142,7 +142,6 @@ export default function PizzaDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#ecebea] pb-8">
-      {/* Header vermelho + voltar */}
       <header className="relative bg-[#c93b44] px-4 pb-28 pt-4 md:px-8 md:pb-32">
         <div className="mx-auto flex max-w-lg items-start">
           <NavigationMenu viewport={false} className="max-w-none">
@@ -163,7 +162,6 @@ export default function PizzaDetailPage() {
           </NavigationMenu>
         </div>
 
-        {/* Imagem circular sobreposta */}
         <div className="pointer-events-none absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 translate-y-1/2 justify-center">
           <div className="relative h-44 w-44 overflow-hidden rounded-full border-4 border-white shadow-lg md:h-52 md:w-52">
             <Image
