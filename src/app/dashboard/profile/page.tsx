@@ -7,6 +7,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import {
   normalizeMeProfile,
@@ -152,11 +153,11 @@ export default function ProfilePage() {
               <label htmlFor="profile-name" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Nome completo
               </label>
-              <input
+              <Input
                 id="profile-name"
                 readOnly
                 value={profile.name}
-                className={fieldClass}
+                className={`${fieldClass} h-auto`}
               />
             </div>
 
@@ -164,12 +165,12 @@ export default function ProfilePage() {
               <label htmlFor="profile-email" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 E-mail
               </label>
-              <input
+              <Input
                 id="profile-email"
                 readOnly
                 type="email"
                 value={profile.email}
-                className={fieldClass}
+                className={`${fieldClass} h-auto`}
               />
             </div>
 
@@ -177,11 +178,11 @@ export default function ProfilePage() {
               <label htmlFor="profile-phone" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Telefone
               </label>
-              <input
+              <Input
                 id="profile-phone"
                 readOnly
                 value={formatPhone(profile.phone)}
-                className={fieldClass}
+                className={`${fieldClass} h-auto`}
               />
             </div>
 
@@ -189,11 +190,11 @@ export default function ProfilePage() {
               <label htmlFor="profile-cpf" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 CPF
               </label>
-              <input
+              <Input
                 id="profile-cpf"
                 readOnly
                 value={formatCpf(profile.cpf)}
-                className={fieldClass}
+                className={`${fieldClass} h-auto`}
               />
             </div>
 
@@ -201,11 +202,11 @@ export default function ProfilePage() {
               <label htmlFor="profile-birthday" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Data de nascimento
               </label>
-              <input
+              <Input
                 id="profile-birthday"
                 readOnly
                 value={formatDateBr(profile.birthday)}
-                className={fieldClass}
+                className={`${fieldClass} h-auto`}
               />
             </div>
 
@@ -213,11 +214,11 @@ export default function ProfilePage() {
               <label htmlFor="profile-id" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 ID
               </label>
-              <input
+              <Input
                 id="profile-id"
                 readOnly
                 value={profile.id}
-                className={`${fieldClass} font-mono text-sm`}
+                className={`${fieldClass} font-mono text-sm h-auto`}
               />
             </div>
 

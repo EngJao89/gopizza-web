@@ -7,6 +7,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
 import {
   normalizePizzaFlavorDetail,
@@ -277,13 +278,13 @@ export default function PizzaDetailPage() {
               >
                 Número da mesa
               </label>
-              <input
+              <Input
                 id="mesa"
                 type="number"
                 min={1}
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
-                className="w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+                className="w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] h-auto"
               />
             </div>
             <div>
@@ -293,13 +294,13 @@ export default function PizzaDetailPage() {
               >
                 Quantidade
               </label>
-              <input
+              <Input
                 id="qtd"
                 type="number"
                 min={1}
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+                className="w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] h-auto"
               />
             </div>
           </div>
