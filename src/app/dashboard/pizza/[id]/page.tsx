@@ -8,6 +8,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import {
   normalizePizzaFlavorDetail,
@@ -252,7 +253,7 @@ export default function PizzaDetailPage() {
                   const checked = selectedExtras.includes(opt);
                   return (
                     <li key={opt}>
-                      <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#e8e4e2] bg-[#faf9f9] px-3 py-2.5 transition hover:border-[#d4ccc8]">
+                      <Label className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#e8e4e2] bg-[#faf9f9] px-3 py-2.5 transition hover:border-[#d4ccc8]">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -262,7 +263,7 @@ export default function PizzaDetailPage() {
                         <span className="text-sm font-medium text-[#3d2c29]">
                           {opt}
                         </span>
-                      </label>
+                      </Label>
                     </li>
                   );
                 })}
@@ -272,12 +273,12 @@ export default function PizzaDetailPage() {
 
           <div className="mt-6 grid grid-cols-2 gap-4">
             <div>
-              <label
+              <Label
                 htmlFor="mesa"
                 className="mb-1 block text-xs font-medium text-[#8a7d79]"
               >
                 Número da mesa
-              </label>
+              </Label>
               <Input
                 id="mesa"
                 type="number"
@@ -288,12 +289,12 @@ export default function PizzaDetailPage() {
               />
             </div>
             <div>
-              <label
+              <Label
                 htmlFor="qtd"
                 className="mb-1 block text-xs font-medium text-[#8a7d79]"
               >
                 Quantidade
-              </label>
+              </Label>
               <Input
                 id="qtd"
                 type="number"
