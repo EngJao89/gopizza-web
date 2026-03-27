@@ -7,6 +7,7 @@ import { AuthSplitLayout, authFieldClassName } from "@/components/auth/auth-spli
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import api from "@/lib/axios";
@@ -22,7 +23,6 @@ export type SignUpFormData = {
   cpf: string;
 };
 
-/** Payload enviado à API (normalizado). */
 type SignUpPayload = {
   email: string;
   name: string;
@@ -169,12 +169,12 @@ export default function SignUpPage() {
         </div>
 
         <div>
-          <label
+          <Label
             htmlFor="signup-birthday"
-            className="mb-1.5 block text-sm text-white/80"
+            className="mb-1.5 block text-sm font-medium text-white/80"
           >
             Data de nascimento
-          </label>
+          </Label>
           <input type="hidden" {...register("birthday", { required: "Informe sua data de nascimento" })} />
           <Popover>
             <PopoverTrigger asChild>

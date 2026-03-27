@@ -8,6 +8,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import {
   normalizeMeProfile,
@@ -150,9 +151,9 @@ export default function ProfilePage() {
             </p>
 
             <div>
-              <label htmlFor="profile-name" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-name" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Nome completo
-              </label>
+              </Label>
               <Input
                 id="profile-name"
                 readOnly
@@ -162,9 +163,9 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="profile-email" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-email" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 E-mail
-              </label>
+              </Label>
               <Input
                 id="profile-email"
                 readOnly
@@ -175,9 +176,9 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="profile-phone" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-phone" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Telefone
-              </label>
+              </Label>
               <Input
                 id="profile-phone"
                 readOnly
@@ -187,9 +188,9 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="profile-cpf" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-cpf" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 CPF
-              </label>
+              </Label>
               <Input
                 id="profile-cpf"
                 readOnly
@@ -199,9 +200,9 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="profile-birthday" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-birthday" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 Data de nascimento
-              </label>
+              </Label>
               <Input
                 id="profile-birthday"
                 readOnly
@@ -211,9 +212,9 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="profile-id" className="mb-1 block text-xs font-medium text-[#8a7d79]">
+              <Label htmlFor="profile-id" className="mb-1 block text-xs font-medium text-[#8a7d79]">
                 ID
-              </label>
+              </Label>
               <Input
                 id="profile-id"
                 readOnly
