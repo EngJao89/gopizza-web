@@ -1,14 +1,13 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { ProfileEditForm } from "@/components/dashboard/profile-edit-form";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import {
   normalizeMeProfile,
@@ -18,44 +17,6 @@ import { toast } from "@/lib/toast";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const fieldClass =
-  "w-full rounded-lg border border-[#e8e4e2] bg-[#faf9f9] px-3 py-2.5 text-[#3d2c29] outline-none read-only:cursor-default";
-
-function formatCpf(digits: string): string {
-  const d = digits.replaceAll(/\D/g, "");
-  if (d.length !== 11) return digits;
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
-}
-
-function formatPhone(digits: string): string {
-  const d = digits.replaceAll(/\D/g, "");
-  if (d.length === 11) {
-    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-  }
-  if (d.length === 10) {
-    return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  }
-  return digits;
-}
-
-function formatDateBr(isoDate: string): string {
-  if (!isoDate) return "";
-  const part = isoDate.split("T")[0] ?? "";
-  const [y, m, day] = part.split("-");
-  if (!y || !m || !day) return isoDate;
-  return `${day}/${m}/${y}`;
-}
-
-function formatDateTimeBr(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(d);
-}
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<MeProfile | null>(null);
@@ -139,87 +100,12 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {status === "ready" && profile && (
-          <form
-            className="space-y-4 rounded-2xl bg-white p-5 shadow-sm md:p-6"
-            onSubmit={(e) => e.preventDefault()}
-          >
-
-            <div>
-              <Label htmlFor="profile-name" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                Nome completo
-              </Label>
-              <Input
-                id="profile-name"
-                readOnly
-                value={profile.name}
-                className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profile-email" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                E-mail
-              </Label>
-              <Input
-                id="profile-email"
-                readOnly
-                type="email"
-                value={profile.email}
-                className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profile-phone" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                Telefone
-              </Label>
-              <Input
-                id="profile-phone"
-                readOnly
-                value={formatPhone(profile.phone)}
-                className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profile-cpf" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                CPF
-              </Label>
-              <Input
-                id="profile-cpf"
-                readOnly
-                value={formatCpf(profile.cpf)}
-                className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profile-birthday" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                Data de nascimento
-              </Label>
-              <Input
-                id="profile-birthday"
-                readOnly
-                value={formatDateBr(profile.birthday)}
-                className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div className="border-t border-[#ecebea] pt-4 text-xs text-[#8a7d79]">
-              <p>
-                <span className="font-medium text-[#6b5e5a]">Criado em: </span>
-                {formatDateTimeBr(profile.createdAt)}
-              </p>
-              <p className="mt-1">
-                <span className="font-medium text-[#6b5e5a]">
-                  Atualizado em:{" "}
-                </span>
-                {formatDateTimeBr(profile.updatedAt)}
-              </p>
-            </div>
-          </form>
-        )}
+        {status === "ready" && profile ? (
+          <ProfileEditForm
+            profile={profile}
+            onUpdated={(next) => setProfile(next)}
+          />
+        ) : null}
       </main>
 
       <DashboardBottomNav active="perfil" />
