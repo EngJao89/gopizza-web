@@ -144,11 +144,6 @@ export default function ProfilePage() {
             className="space-y-4 rounded-2xl bg-white p-5 shadow-sm md:p-6"
             onSubmit={(e) => e.preventDefault()}
           >
-            <p className="text-xs text-[#8a7d79]">
-              Dados exibidos conforme retorno de{" "}
-              <code className="rounded bg-[#f0eeed] px-1">api/auth/me</code>{" "}
-              (somente leitura).
-            </p>
 
             <div>
               <Label htmlFor="profile-name" className="mb-1 block text-xs font-medium text-[#8a7d79]">
@@ -208,18 +203,6 @@ export default function ProfilePage() {
                 readOnly
                 value={formatDateBr(profile.birthday)}
                 className={`${fieldClass} h-auto`}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="profile-id" className="mb-1 block text-xs font-medium text-[#8a7d79]">
-                ID
-              </Label>
-              <Input
-                id="profile-id"
-                readOnly
-                value={profile.id}
-                className={`${fieldClass} font-mono text-sm h-auto`}
               />
             </div>
 
