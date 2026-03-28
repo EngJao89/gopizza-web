@@ -93,14 +93,14 @@ export default function ProfilePage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#ecebea] pb-24">
-      <header className="flex w-full items-center gap-3 border-b border-[#e0dcd9] bg-white px-4 py-4 shadow-sm md:px-8">
+      <header className="relative z-10 flex w-full shrink-0 items-center gap-3 bg-[#c93b44] px-4 py-4 shadow-sm md:px-8">
         <NavigationMenu viewport={false}>
           <NavigationMenuList className="flex-none justify-start gap-0">
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
                 <Link
                   href="/dashboard"
-                  className="flex h-10 w-10 items-center justify-center rounded-lg text-[#3d2c29] hover:bg-[#f5f3f2]"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50"
                   aria-label="Voltar ao cardápio"
                 >
                   <ChevronLeft className="h-6 w-6" strokeWidth={2} />
@@ -109,7 +109,7 @@ export default function ProfilePage() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <h1 className="font-serif text-xl font-semibold text-[#3d2c29] md:text-2xl">
+        <h1 className="font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
           Meu perfil
         </h1>
       </header>
