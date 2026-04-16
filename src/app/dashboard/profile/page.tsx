@@ -108,7 +108,7 @@ export default function ProfilePage() {
         ) : null}
       </main>
 
-      <DashboardBottomNav active="perfil" />
+      <DashboardBottomNav active="none" />
     </div>
   );
 }
