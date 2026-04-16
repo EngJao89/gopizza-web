@@ -235,6 +235,21 @@ export function ProfileEditForm({ profile, onUpdated }: ProfileEditFormProps) {
         ) : null}
       </div>
 
+      <div>
+        <Label
+          htmlFor="profile-admin"
+          className="mb-1 block text-xs font-medium text-[#8a7d79]"
+        >
+          Perfil administrativo
+        </Label>
+        <Input
+          id="profile-admin"
+          readOnly
+          value={profile.admin ? "Sim" : "Não"}
+          className="w-full rounded-lg border border-[#e8e4e2] bg-[#faf9f9] px-3 py-2.5 text-[#3d2c29] outline-none read-only:cursor-default h-auto"
+        />
+      </div>
+
       <Button
         type="submit"
         disabled={isSubmitting}

@@ -14,6 +14,7 @@ export type MeProfile = {
   phone: string;
   cpf: string;
   birthday: string;
+  admin: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -82,6 +83,16 @@ function asTrimmedString(value: unknown): string {
   return value.trim();
 }
 
+function asBoolean(value: unknown): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const lower = value.trim().toLowerCase();
+    return lower === "true" || lower === "1";
+  }
+  if (typeof value === "number") return value === 1;
+  return false;
+}
+
 /**
  * Normaliza GET api/auth/me para o formulário de perfil (objeto plano).
  */
@@ -89,8 +100,17 @@ export function normalizeMeProfile(data: unknown): MeProfile | null {
   const root = asRecord(data);
   if (!root) return null;
 
-  const flat =
-    asRecord(root.data) ?? asRecord(root.user) ?? root;
+  const dataRecord = asRecord(root.data);
+  const userRecord = asRecord(root.user);
+  const nestedUserRecord = asRecord(dataRecord?.user);
+
+  const flat = dataRecord ?? userRecord ?? nestedUserRecord ?? root;
+  const adminRaw =
+    flat.admin ??
+    root.admin ??
+    dataRecord?.admin ??
+    userRecord?.admin ??
+    nestedUserRecord?.admin;
 
   const id = asTrimmedString(flat.id);
   const name = asTrimmedString(flat.name);
@@ -103,6 +123,7 @@ export function normalizeMeProfile(data: unknown): MeProfile | null {
     phone: asTrimmedString(flat.phone),
     cpf: asTrimmedString(flat.cpf),
     birthday: asTrimmedString(flat.birthday),
+    admin: asBoolean(adminRaw),
     createdAt: asTrimmedString(flat.createdAt),
     updatedAt: asTrimmedString(flat.updatedAt),
   };
