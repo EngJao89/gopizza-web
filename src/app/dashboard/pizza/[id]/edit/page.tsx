@@ -207,7 +207,7 @@ export default function EditPizzaPage() {
           >
             <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
           </Link>
-          <h1 className="font-serif text-3xl font-semibold leading-none">Cadastrar</h1>
+          <h1 className="font-serif text-3xl font-semibold leading-none">Editar pizza</h1>
           <Button
             type="button"
             variant="ghost"

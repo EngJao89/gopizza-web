@@ -150,14 +150,13 @@ export default function PizzaDetailPage() {
             <NavigationMenuList className="justify-start">
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
-                  <button
-                    type="button"
-                    onClick={() => router.back()}
+                  <Link
+                    href="/dashboard"
                     className="flex h-10 w-10 items-center justify-center rounded-lg border-0 bg-white/20 text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50"
-                    aria-label="Voltar"
+                    aria-label="Voltar ao cardápio"
                   >
                     <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
-                  </button>
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
