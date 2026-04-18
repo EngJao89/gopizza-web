@@ -191,6 +191,14 @@ export default function PizzaDetailPage() {
             </p>
           ) : null}
 
+          <Button
+            asChild
+            variant="outline"
+            className="mt-4 w-full rounded-xl border-[#c93b44]/50 py-3 text-base font-semibold text-[#c93b44] hover:bg-[#fff8f8]"
+          >
+            <Link href={`/dashboard/pizza/${id}/edit`}>Alterar pizza</Link>
+          </Button>
+
           <p className="mt-6 text-xs font-medium uppercase tracking-wide text-[#8a7d79]">
             Selecione um tamanho
           </p>
