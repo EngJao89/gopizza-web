@@ -1,14 +1,31 @@
 import { z } from "zod";
 
-function parseMoney(raw: string): number {
-  return Number.parseFloat(raw.replace(",", "."));
+export function parseMoneyBr(raw: string): number {
+  const trimmed = raw.trim().replace(/\s+/g, "").replace(/^R\$\s*/i, "");
+  if (!trimmed) return Number.NaN;
+  if (trimmed.includes(",")) {
+    const noThousands = trimmed.replace(/\./g, "");
+    const normalized = noThousands.replace(",", ".");
+    return Number.parseFloat(normalized);
+  }
+  return Number.parseFloat(trimmed.replace(/\./g, ""));
+}
+
+export function formatPriceFieldBr(n: number): string {
+  return n.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 const priceField = z
   .string()
   .trim()
   .min(1, "Informe o valor")
-  .refine((v) => Number.isFinite(parseMoney(v)) && parseMoney(v) > 0, {
+  .refine((v) => {
+    const n = parseMoneyBr(v);
+    return Number.isFinite(n) && n > 0;
+  }, {
     message: "Valor invalido",
   });
 
@@ -27,5 +44,5 @@ export const pizzaCreateSchema = z.object({
 export type PizzaCreateFormValues = z.infer<typeof pizzaCreateSchema>;
 
 export function toPriceNumber(raw: string): number {
-  return parseMoney(raw);
+  return parseMoneyBr(raw);
 }
