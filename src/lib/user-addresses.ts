@@ -1,6 +1,7 @@
 export type UserAddress = {
   id: string;
   zipCode: string;
+  address: string;
   street: string;
   number: string;
   complement: string;
@@ -38,12 +39,13 @@ function toAddress(value: unknown): UserAddress | null {
   const address: UserAddress = {
     id: firstString(record, ["id", "addressId"]),
     zipCode: firstString(record, ["zipCode", "zipcode", "postalCode", "cep"]),
+    address: firstString(record, ["address", "endereco", "endereço"]),
     street: firstString(record, ["street", "logradouro", "address", "rua"]),
     number: firstString(record, ["number", "numero"]),
     complement: firstString(record, ["complement", "complemento"]),
     neighborhood: firstString(record, ["neighborhood", "bairro", "district"]),
     city: firstString(record, ["city", "cidade"]),
-    state: firstString(record, ["state", "uf"]),
+    state: firstString(record, ["state", "uf", "estado"]),
     reference: firstString(record, ["reference", "referencia"]),
   };
 
@@ -51,31 +53,40 @@ function toAddress(value: unknown): UserAddress | null {
   return hasAnyField ? address : null;
 }
 
-function collectAddressArrays(value: unknown): unknown[][] {
+function collectAddressCandidates(value: unknown): unknown[] {
   const root = asRecord(value);
-  if (!root) return [];
+  if (!root) return [value];
 
   const dataRecord = asRecord(root.data);
 
-  const candidates: unknown[] = [
+  return [
     root,
+    root.address,
     root.addresses,
     root.items,
     root.results,
     dataRecord,
+    dataRecord?.address,
     dataRecord?.addresses,
     dataRecord?.items,
     dataRecord?.results,
   ];
-
-  return candidates.filter((item): item is unknown[] => Array.isArray(item));
 }
 
 export function normalizeUserAddresses(data: unknown): UserAddress[] {
-  const arrays = collectAddressArrays(data);
-  const resolvedArray = arrays.find((entry) => entry.length > 0) ?? arrays[0] ?? [];
+  const entries = collectAddressCandidates(data).flatMap((entry) =>
+    Array.isArray(entry) ? entry : [entry],
+  );
 
-  return resolvedArray
+  const uniqueById = new Set<string>();
+
+  return entries
     .map((entry) => toAddress(entry))
-    .filter((entry): entry is UserAddress => entry !== null);
+    .filter((entry): entry is UserAddress => entry !== null)
+    .filter((entry) => {
+      if (!entry.id) return true;
+      if (uniqueById.has(entry.id)) return false;
+      uniqueById.add(entry.id);
+      return true;
+    });
 }
