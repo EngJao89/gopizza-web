@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
+import { ProfileAddressForm } from "@/components/dashboard/profile-address-form";
 import { ProfileEditForm } from "@/components/dashboard/profile-edit-form";
 import {
   NavigationMenu,
@@ -75,7 +76,7 @@ export default function ProfilePage() {
         </h1>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-6 md:px-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8">
         {status === "loading" && (
           <div className="flex justify-center py-16">
             <Loader2
@@ -101,10 +102,13 @@ export default function ProfilePage() {
         )}
 
         {status === "ready" && profile ? (
-          <ProfileEditForm
-            profile={profile}
-            onUpdated={(next) => setProfile(next)}
-          />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ProfileEditForm
+              profile={profile}
+              onUpdated={(next) => setProfile(next)}
+            />
+            <ProfileAddressForm userId={profile.id} />
+          </div>
         ) : null}
       </main>
 
