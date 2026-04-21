@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
+import { saveOrder } from "@/lib/orders";
 import {
   normalizePizzaFlavorDetail,
   type PizzaFlavorDetail,
@@ -111,10 +112,23 @@ export default function PizzaDetailPage() {
     if (!detail) return;
     setSubmitting(true);
     try {
-      const extras =
-        selectedExtras.length > 0 ? ` Opcionais: ${selectedExtras.join(", ")}.` : "";
-      toast.success(`Pedido confirmado (simulacao).${extras}`);
-      router.push("/dashboard");
+      const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
+      const mesa = Math.max(1, Number.parseInt(tableNumber, 10) || 1);
+      saveOrder({
+        id: `${detail.id}-${Date.now()}`,
+        pizzaId: detail.id,
+        pizzaName: detail.name,
+        pizzaImage: detail.image,
+        size,
+        quantity: q,
+        tableNumber: mesa,
+        extras: selectedExtras,
+        total,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success("Pedido confirmado.");
+      router.push("/dashboard/pedidos");
     } finally {
       setSubmitting(false);
     }
