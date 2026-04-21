@@ -22,6 +22,7 @@ type ProfileAddressFormProps = Readonly<{
 const emptyAddress: UserAddress = {
   id: "",
   zipCode: "",
+  address: "",
   street: "",
   number: "",
   complement: "",
@@ -109,14 +110,14 @@ export function ProfileAddressForm({ userId }: ProfileAddressFormProps) {
 
           <div>
             <Label
-              htmlFor="address-street"
+              htmlFor="address-line"
               className="mb-1 block text-xs font-medium text-[#8a7d79]"
             >
-              Rua
+              Endereco
             </Label>
             <Input
-              id="address-street"
-              value={address.street}
+              id="address-line"
+              value={address.address || address.street}
               readOnly
               className={`${fieldClass} h-auto read-only:cursor-default`}
             />
