@@ -10,8 +10,9 @@ import { normalizeMeResponse } from "@/lib/current-user";
 import { logoutFromApp } from "@/lib/logout";
 import { normalizeProductsResponse, type ProductCard } from "@/lib/products";
 import { toast } from "@/lib/toast";
-import { Loader2, Search } from "lucide-react";
+import { ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -182,26 +183,35 @@ export default function BebidasPage() {
             <>
               <ul className="divide-y divide-[#ecebea]">
                 {filtered.map((item) => (
-                  <li key={item.id} className="flex items-center gap-4 py-4">
-                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
-                      <Image
-                        src={item.imagem}
-                        alt={item.titulo}
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                        unoptimized
+                  <li key={item.id}>
+                    <Link
+                      href={`/dashboard/bebidas/${item.id}`}
+                      className="flex w-full items-center gap-4 py-4 text-left transition hover:bg-[#faf9f9]"
+                    >
+                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
+                        <Image
+                          src={item.imagem}
+                          alt={item.titulo}
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-serif text-lg font-semibold text-[#3d2c29]">
+                          {item.titulo}
+                        </p>
+                        <p className="text-sm text-[#8a7d79]">{item.marca}</p>
+                        <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-[#6b5e5a]">
+                          {item.descricao || item.conteudo}
+                        </p>
+                      </div>
+                      <ChevronRight
+                        className="h-[18px] w-[18px] shrink-0 text-[#b8b0ad]"
+                        aria-hidden
                       />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-serif text-lg font-semibold text-[#3d2c29]">
-                        {item.titulo}
-                      </p>
-                      <p className="text-sm text-[#8a7d79]">{item.marca}</p>
-                      <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-[#6b5e5a]">
-                        {item.descricao || item.conteudo}
-                      </p>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ul>
