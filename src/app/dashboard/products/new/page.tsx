@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import api from "@/lib/axios";
 import {
   productCreateSchema,
+  toValueNumber,
   type ProductCreateFormValues,
 } from "@/lib/schemas/product-create";
 import { toast } from "@/lib/toast";
@@ -34,6 +35,7 @@ export default function NewProductPage() {
       titulo: "",
       descricao: "",
       conteudo: "",
+      valor: "",
     },
   });
 
@@ -65,6 +67,9 @@ export default function NewProductPage() {
     form.append("titulo", data.titulo.trim());
     form.append("descricao", data.descricao.trim());
     form.append("conteudo", data.conteudo.trim());
+    const valor = toValueNumber(data.valor);
+    form.append("valor", String(valor));
+    form.append("value", String(valor));
     form.append("imagem", imageFile);
 
     try {
@@ -204,6 +209,24 @@ export default function NewProductPage() {
               <p className="mt-1.5 text-sm text-[#c93b44]">
                 {errors.descricao.message}
               </p>
+            ) : null}
+          </div>
+
+          <div>
+            <Label htmlFor="product-valor" className="mb-2 block text-2xl text-[#5a3a42]">
+              Valor
+            </Label>
+            <Input
+              id="product-valor"
+              type="text"
+              inputMode="decimal"
+              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-lg"
+              placeholder="Ex.: 9,50"
+              aria-invalid={!!errors.valor}
+              {...register("valor")}
+            />
+            {errors.valor ? (
+              <p className="mt-1.5 text-sm text-[#c93b44]">{errors.valor.message}</p>
             ) : null}
           </div>
 
