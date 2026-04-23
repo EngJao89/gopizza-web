@@ -8,7 +8,7 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { LogOut, MoreVertical, Smile } from "lucide-react";
+import { ClipboardList, LogOut, MoreVertical, Smile } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -51,33 +51,42 @@ export function DashboardHeader({
         </h1>
       </div>
 
-      <Menubar className="h-auto shrink-0 border-0 bg-transparent p-0 shadow-none">
-        <MenubarMenu>
-          <MenubarTrigger
-            disabled={isLoggingOut}
-            className="flex h-11 w-11 items-center justify-center rounded-lg border-0 bg-transparent p-0 text-white outline-none hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/40 data-[state=open]:bg-white/10"
-            aria-label="Menu da conta"
-          >
-            <MoreVertical className="h-[22px] w-[22px]" aria-hidden />
-          </MenubarTrigger>
-          <MenubarContent align="end" sideOffset={8} className="min-w-44">
-            <MenubarItem asChild>
-              <Link href="/dashboard/profile">Meu perfil</Link>
-            </MenubarItem>
-            <MenubarSeparator />
-            <MenubarItem
-              variant="destructive"
+      <div className="flex items-center gap-2">
+        <Link
+          href="/dashboard/pedidos"
+          className="inline-flex h-11 items-center gap-2 rounded-lg bg-white/15 px-3 text-sm font-medium text-white transition hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+        >
+          <ClipboardList className="h-4 w-4" aria-hidden />
+          Pedidos
+        </Link>
+        <Menubar className="h-auto shrink-0 border-0 bg-transparent p-0 shadow-none">
+          <MenubarMenu>
+            <MenubarTrigger
               disabled={isLoggingOut}
-              onSelect={() => {
-                void onLogout();
-              }}
+              className="flex h-11 w-11 items-center justify-center rounded-lg border-0 bg-transparent p-0 text-white outline-none hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/40 data-[state=open]:bg-white/10"
+              aria-label="Menu da conta"
             >
-              <LogOut className="h-4 w-4" aria-hidden />
-              Sair
-            </MenubarItem>
-          </MenubarContent>
-        </MenubarMenu>
-      </Menubar>
+              <MoreVertical className="h-[22px] w-[22px]" aria-hidden />
+            </MenubarTrigger>
+            <MenubarContent align="end" sideOffset={8} className="min-w-44">
+              <MenubarItem asChild>
+                <Link href="/dashboard/profile">Meu perfil</Link>
+              </MenubarItem>
+              <MenubarSeparator />
+              <MenubarItem
+                variant="destructive"
+                disabled={isLoggingOut}
+                onSelect={() => {
+                  void onLogout();
+                }}
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+                Sair
+              </MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      </div>
     </header>
   );
 }
