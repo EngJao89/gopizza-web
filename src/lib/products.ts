@@ -7,6 +7,7 @@ export type ProductCard = {
   descricao: string;
   conteudo: string;
   imagem: string;
+  valor: number | null;
 };
 
 export type ProductDetail = ProductCard & {
@@ -23,6 +24,15 @@ function asString(value: unknown, fallback = ""): string {
     return String(value);
   }
   return fallback;
+}
+
+function asNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value.replace(",", "."));
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 function extractArray(data: unknown): unknown[] {
@@ -48,6 +58,7 @@ function normalizeOne(row: unknown, fallbackId: string): ProductCard | null {
     o.imagemUrl ?? o.imageUrl ?? o.image ?? o.photo ?? o.picture,
   );
   const imagem = resolveImageUrl(rawImage) || FALLBACK_IMAGE;
+  const valor = asNumber(o.valor ?? o.price ?? o.unitPrice);
 
   if (!titulo) return null;
 
@@ -58,6 +69,7 @@ function normalizeOne(row: unknown, fallbackId: string): ProductCard | null {
     descricao,
     conteudo,
     imagem,
+    valor,
   };
 }
 

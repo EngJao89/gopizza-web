@@ -16,6 +16,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+function formatBrl(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}
+
 function formatDateTime(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
@@ -143,6 +150,12 @@ export default function BebidaDetailPage() {
           {description ? (
             <p className="mt-3 text-sm leading-relaxed text-[#6b5e5a]">{description}</p>
           ) : null}
+
+          {detail.valor === null ? null : (
+            <div className="mt-5 inline-flex items-center rounded-lg bg-[#f0faf3] px-3 py-2 text-sm font-semibold text-[#2d8a54]">
+              Valor: {formatBrl(detail.valor)}
+            </div>
+          )}
 
           {detail.conteudo ? (
             <div className="mt-6 rounded-xl border border-[#ecebea] bg-[#faf9f9] p-4">

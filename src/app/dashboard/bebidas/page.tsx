@@ -16,6 +16,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+function formatBrl(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+}
+
 export default function BebidasPage() {
   const router = useRouter();
   const [displayName, setDisplayName] = useState("Garçom");
@@ -207,6 +214,11 @@ export default function BebidasPage() {
                           {item.descricao || item.conteudo}
                         </p>
                       </div>
+                      {item.valor === null ? null : (
+                        <p className="shrink-0 text-sm font-semibold text-[#2d8a54]">
+                          {formatBrl(item.valor)}
+                        </p>
+                      )}
                       <ChevronRight
                         className="h-[18px] w-[18px] shrink-0 text-[#b8b0ad]"
                         aria-hidden
