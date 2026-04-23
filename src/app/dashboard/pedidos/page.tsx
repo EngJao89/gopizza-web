@@ -117,7 +117,7 @@ export default function PedidosPage() {
           </>
         )}
       </div>
-      <DashboardBottomNav active="pedidos" pedidosCount={orders.length} />
+      <DashboardBottomNav active="none" />
     </div>
   );
 }
