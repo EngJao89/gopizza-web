@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 type Props = Readonly<{
-  active: "cardapio" | "pedidos" | "cadastro" | "none";
+  active: "cardapio" | "pedidos" | "cadastro-pizza" | "cadastro-produtos" | "none";
   /** Quantidade de pedidos pendentes / na fila (ex.: vinda da API). Padrão: 0. */
   pedidosCount?: number;
 }>;
@@ -39,12 +39,22 @@ export function DashboardBottomNav({
         <Link
           href="/dashboard/pizza/new"
           className={
-            active === "cadastro"
+            active === "cadastro-pizza"
               ? "text-[#3d2c29] underline decoration-[#c93b44] decoration-2 underline-offset-4"
               : "text-[#8a7d79] transition hover:text-[#3d2c29]"
           }
         >
-          Cadastro
+          Pizza
+        </Link>
+        <Link
+          href="/dashboard/products/new"
+          className={
+            active === "cadastro-produtos"
+              ? "text-[#3d2c29] underline decoration-[#c93b44] decoration-2 underline-offset-4"
+              : "text-[#8a7d79] transition hover:text-[#3d2c29]"
+          }
+        >
+          Produtos
         </Link>
       </div>
     </nav>
