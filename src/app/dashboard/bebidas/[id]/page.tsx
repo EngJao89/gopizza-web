@@ -1,19 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { AxiosError } from "axios";
 import api from "@/lib/axios";
+import { createOrder, saveOrder } from "@/lib/orders";
 import { normalizeProductDetail, type ProductDetail } from "@/lib/products";
 import { toast } from "@/lib/toast";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 function formatBrl(value: number): string {
@@ -35,12 +39,16 @@ function formatDateTime(iso: string | null): string {
 
 export default function BebidaDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = typeof params.id === "string" ? params.id : "";
 
   const [detail, setDetail] = useState<ProductDetail | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     id ? "loading" : "error",
   );
+  const [tableNumber, setTableNumber] = useState("1");
+  const [quantity, setQuantity] = useState("1");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -76,6 +84,61 @@ export default function BebidaDetailPage() {
     if (!detail) return "";
     return detail.descricao || detail.conteudo;
   }, [detail]);
+
+  const total = useMemo(() => {
+    if (!detail || detail.valor === null) return 0;
+    const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
+    return detail.valor * q;
+  }, [detail, quantity]);
+
+  const handleConfirm = async () => {
+    if (!detail || detail.valor === null) {
+      toast.error("Nao foi possivel identificar o valor da bebida.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
+      const mesa = Math.max(1, Number.parseInt(tableNumber, 10) || 1);
+      const line = {
+        productId: detail.id,
+        productName: detail.titulo,
+        quantity: q,
+        unitPrice: detail.valor,
+      };
+
+      await createOrder({
+        customerPhone: "",
+        deliveryAddress: "",
+        notes: `Mesa ${mesa} | Item de bebida`,
+        items: [line],
+        products: [line],
+      });
+
+      saveOrder({
+        id: `${detail.id}-${Date.now()}`,
+        itemId: detail.id,
+        itemName: detail.titulo,
+        itemImage: detail.imagem,
+        itemType: "bebida",
+        quantity: q,
+        tableNumber: mesa,
+        extras: [],
+        total: detail.valor * q,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast.success("Pedido confirmado.");
+      router.push("/dashboard/pedidos");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message =
+        axiosError.response?.data?.message ?? "Nao foi possivel confirmar o pedido.";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (status === "loading") {
     return (
@@ -156,6 +219,54 @@ export default function BebidaDetailPage() {
               Valor: {formatBrl(detail.valor)}
             </div>
           )}
+
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <div>
+              <Label
+                htmlFor="mesa"
+                className="mb-1 block text-xs font-medium text-[#8a7d79]"
+              >
+                Número da mesa
+              </Label>
+              <Input
+                id="mesa"
+                type="number"
+                min={1}
+                value={tableNumber}
+                onChange={(e) => setTableNumber(e.target.value)}
+                className="h-auto w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+              />
+            </div>
+            <div>
+              <Label
+                htmlFor="qtd"
+                className="mb-1 block text-xs font-medium text-[#8a7d79]"
+              >
+                Quantidade
+              </Label>
+              <Input
+                id="qtd"
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="h-auto w-full rounded-lg border border-[#e8e4e2] bg-white px-3 py-2.5 text-[#3d2c29] outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+              />
+            </div>
+          </div>
+
+          <p className="mt-6 text-right font-serif text-lg font-semibold text-[#3d2c29]">
+            Total: {formatBrl(total)}
+          </p>
+
+          <Button
+            type="button"
+            disabled={submitting || detail.valor === null}
+            onClick={handleConfirm}
+            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-base font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
+          >
+            {submitting ? "Confirmando..." : "Confirmar pedido"}
+          </Button>
 
           {detail.conteudo ? (
             <div className="mt-6 rounded-xl border border-[#ecebea] bg-[#faf9f9] p-4">

@@ -52,7 +52,7 @@ export default function PedidosPage() {
         {orders.length === 0 ? (
           <div className="flex min-h-[55vh] flex-col items-center justify-center gap-4">
             <p className="max-w-md text-center text-[#6b5e5a]">
-              Nenhum pedido confirmado ainda. Selecione uma pizza no cardápio e
+              Nenhum pedido confirmado ainda. Selecione uma pizza ou bebida e
               confirme o pedido.
             </p>
             <Button
@@ -73,8 +73,8 @@ export default function PedidosPage() {
                   <div className="flex gap-3">
                     <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#ecebea] bg-[#f5f3f2]">
                       <Image
-                        src={order.pizzaImage}
-                        alt={order.pizzaName}
+                        src={order.itemImage}
+                        alt={order.itemName}
                         fill
                         className="object-cover"
                         sizes="64px"
@@ -83,11 +83,16 @@ export default function PedidosPage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-serif text-lg font-semibold text-[#3d2c29]">
-                        {order.pizzaName}
+                        {order.itemName}
                       </p>
                       <p className="text-sm text-[#6b5e5a]">
-                        Mesa {order.tableNumber} • Qtd {order.quantity} • Tamanho{" "}
-                        {order.size.toUpperCase()}
+                        Mesa {order.tableNumber} • Qtd {order.quantity}
+                        {order.itemType === "pizza" && order.size
+                          ? ` • Tamanho ${order.size.toUpperCase()}`
+                          : ""}
+                      </p>
+                      <p className="mt-0.5 text-xs uppercase tracking-wide text-[#8a7d79]">
+                        {order.itemType === "pizza" ? "Pizza" : "Bebida"}
                       </p>
                       {order.extras.length > 0 ? (
                         <p className="mt-0.5 text-xs text-[#8a7d79]">

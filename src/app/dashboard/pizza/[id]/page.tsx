@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AxiosError } from "axios";
 import api from "@/lib/axios";
-import { saveOrder } from "@/lib/orders";
+import { createOrder, saveOrder } from "@/lib/orders";
 import {
   normalizePizzaFlavorDetail,
   type PizzaFlavorDetail,
@@ -114,21 +115,49 @@ export default function PizzaDetailPage() {
     try {
       const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
       const mesa = Math.max(1, Number.parseInt(tableNumber, 10) || 1);
+      const unitPrice = detail.prices[size];
+      const totalValue = unitPrice * q;
+
+      const line = {
+        productId: detail.id,
+        productName: detail.name,
+        quantity: q,
+        unitPrice,
+      };
+      const notesParts = [`Mesa ${mesa}`, `Tamanho ${size.toUpperCase()}`];
+      if (selectedExtras.length > 0) {
+        notesParts.push(`Opcionais: ${selectedExtras.join(", ")}`);
+      }
+
+      await createOrder({
+        customerPhone: "",
+        deliveryAddress: "",
+        notes: notesParts.join(" | "),
+        items: [line],
+        pizzas: [line],
+      });
+
       saveOrder({
         id: `${detail.id}-${Date.now()}`,
-        pizzaId: detail.id,
-        pizzaName: detail.name,
-        pizzaImage: detail.image,
+        itemId: detail.id,
+        itemName: detail.name,
+        itemImage: detail.image,
+        itemType: "pizza",
         size,
         quantity: q,
         tableNumber: mesa,
         extras: selectedExtras,
-        total,
+        total: totalValue,
         createdAt: new Date().toISOString(),
       });
 
       toast.success("Pedido confirmado.");
       router.push("/dashboard/pedidos");
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message =
+        axiosError.response?.data?.message ?? "Nao foi possivel confirmar o pedido.";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
