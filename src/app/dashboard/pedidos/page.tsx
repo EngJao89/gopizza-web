@@ -2,13 +2,39 @@
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
 import { Button } from "@/components/ui/button";
-import { clearSavedOrders, getSavedOrders, type SavedOrder } from "@/lib/orders";
+import { fetchOrders, type SavedOrder } from "@/lib/orders";
+import { toast } from "@/lib/toast";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function PedidosPage() {
-  const [orders, setOrders] = useState<SavedOrder[]>(() => getSavedOrders());
+  const [orders, setOrders] = useState<SavedOrder[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const list = await fetchOrders();
+        if (!cancelled) {
+          setOrders(list);
+          setStatus("ready");
+        }
+      } catch {
+        if (!cancelled) {
+          setOrders([]);
+          setStatus("error");
+          toast.error("Nao foi possivel carregar os pedidos.");
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const totalOrders = orders.length;
   const totalValue = useMemo(
@@ -34,26 +60,41 @@ export default function PedidosPage() {
           <h1 className="font-serif text-2xl font-semibold text-[#3d2c29]">
             Pedidos
           </h1>
-          {totalOrders > 0 ? (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                clearSavedOrders();
-                setOrders([]);
-              }}
-              className="rounded-xl border-[#c93b44]/40 text-[#c93b44] hover:bg-[#fff7f8]"
-            >
-              Limpar pedidos
-            </Button>
-          ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setStatus("loading");
+              void (async () => {
+                try {
+                  const list = await fetchOrders();
+                  setOrders(list);
+                  setStatus("ready");
+                } catch {
+                  setOrders([]);
+                  setStatus("error");
+                  toast.error("Nao foi possivel atualizar os pedidos.");
+                }
+              })();
+            }}
+            className="rounded-xl border-[#c93b44]/40 text-[#c93b44] hover:bg-[#fff7f8]"
+          >
+            Atualizar
+          </Button>
         </div>
 
-        {orders.length === 0 ? (
+        {status === "loading" ? (
+          <div className="flex min-h-[55vh] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-[#c93b44]" />
+          </div>
+        ) : null}
+
+        {status !== "loading" && orders.length === 0 ? (
           <div className="flex min-h-[55vh] flex-col items-center justify-center gap-4">
             <p className="max-w-md text-center text-[#6b5e5a]">
-              Nenhum pedido confirmado ainda. Selecione uma pizza ou bebida e
-              confirme o pedido.
+              {status === "error"
+                ? "Nao foi possivel carregar os pedidos agora."
+                : "Nenhum pedido confirmado ainda. Selecione uma pizza ou bebida e confirme o pedido."}
             </p>
             <Button
               asChild
@@ -62,7 +103,9 @@ export default function PedidosPage() {
               <Link href="/dashboard">Voltar ao cardápio</Link>
             </Button>
           </div>
-        ) : (
+        ) : null}
+
+        {status === "ready" && orders.length > 0 ? (
           <>
             <ul className="space-y-3">
               {orders.map((order) => (
@@ -120,7 +163,7 @@ export default function PedidosPage() {
               </p>
             </div>
           </>
-        )}
+        ) : null}
       </div>
       <DashboardBottomNav active="none" />
     </div>

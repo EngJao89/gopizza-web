@@ -119,3 +119,89 @@ export async function createOrder(payload: CreateOrderPayload): Promise<void> {
   const normalized = normalizeOrderPayload(payload);
   await api.post("api/orders", normalized);
 }
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object") return null;
+  return value as Record<string, unknown>;
+}
+
+function asString(value: unknown): string {
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return "";
+}
+
+function asNumber(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value.replace(",", "."));
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+}
+
+function extractOrdersArray(data: unknown): unknown[] {
+  if (Array.isArray(data)) return data;
+  const root = asRecord(data);
+  if (!root) return [];
+  const nested = root.data ?? root.items ?? root.content ?? root.results ?? root.orders;
+  return Array.isArray(nested) ? nested : [];
+}
+
+function parseOrderLines(order: Record<string, unknown>): OrderItemPayload[] {
+  const lines =
+    order.itens ?? order.items ?? order.products ?? order.pizzas ?? order.lines;
+  if (!Array.isArray(lines)) return [];
+  return lines
+    .map((line) => {
+      const o = asRecord(line);
+      if (!o) return null;
+      const productId = asString(o.productId ?? o.id);
+      const productName = asString(o.productName ?? o.name ?? o.title);
+      const quantity = Math.max(1, asNumber(o.quantity));
+      const unitPrice = asNumber(o.unitPrice ?? o.price ?? o.valor);
+      if (!productId && !productName) return null;
+      return { productId, productName, quantity, unitPrice };
+    })
+    .filter((line): line is OrderItemPayload => line !== null);
+}
+
+export function normalizeOrdersResponse(data: unknown): SavedOrder[] {
+  const rows = extractOrdersArray(data);
+  return rows.flatMap((row, index) => {
+      const order = asRecord(row);
+      if (!order) return [];
+
+      const orderId = asString(order.id ?? order.uuid) || `order-${index}`;
+      const createdAt = asString(order.createdAt ?? order.created_at) || new Date().toISOString();
+      const notes = asString(order.notes).toLowerCase();
+      const tableMatch = /mesa\s*(\d+)/i.exec(notes);
+      const tableNumber = tableMatch ? Number.parseInt(tableMatch[1] ?? "1", 10) : 1;
+      const lines = parseOrderLines(order);
+      if (lines.length === 0) return [];
+
+      return lines.map((line, lineIndex): SavedOrder => {
+        const itemType: SavedOrder["itemType"] =
+          notes.includes("bebida") || !!(order.products && !order.pizzas)
+            ? "bebida"
+            : "pizza";
+        return {
+          id: `${orderId}-${lineIndex}`,
+          itemId: line.productId || `${orderId}-item-${lineIndex}`,
+          itemName: line.productName || "Item do pedido",
+          itemImage: "",
+          itemType,
+          quantity: line.quantity,
+          tableNumber,
+          extras: [],
+          total: line.unitPrice * line.quantity,
+          createdAt,
+        };
+      });
+    });
+}
+
+export async function fetchOrders(): Promise<SavedOrder[]> {
+  const { data } = await api.get<unknown>("api/orders");
+  return normalizeOrdersResponse(data);
+}
