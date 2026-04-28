@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { resolveImageUrl } from "@/lib/pizza-flavors";
 
 export type SavedOrder = {
   id: string;
@@ -19,6 +20,7 @@ export type OrderItemPayload = {
   productName: string;
   quantity: number;
   unitPrice: number;
+  imageUrl?: string;
 };
 
 export type CreateOrderPayload = {
@@ -152,18 +154,17 @@ function parseOrderLines(order: Record<string, unknown>): OrderItemPayload[] {
   const lines =
     order.itens ?? order.items ?? order.products ?? order.pizzas ?? order.lines;
   if (!Array.isArray(lines)) return [];
-  return lines
-    .map((line) => {
-      const o = asRecord(line);
-      if (!o) return null;
-      const productId = asString(o.productId ?? o.id);
-      const productName = asString(o.productName ?? o.name ?? o.title);
-      const quantity = Math.max(1, asNumber(o.quantity));
-      const unitPrice = asNumber(o.unitPrice ?? o.price ?? o.valor);
-      if (!productId && !productName) return null;
-      return { productId, productName, quantity, unitPrice };
-    })
-    .filter((line): line is OrderItemPayload => line !== null);
+  return lines.flatMap((line): OrderItemPayload[] => {
+    const o = asRecord(line);
+    if (!o) return [];
+    const productId = asString(o.productId ?? o.id);
+    const productName = asString(o.productName ?? o.name ?? o.title);
+    const quantity = Math.max(1, asNumber(o.quantity));
+    const unitPrice = asNumber(o.unitPrice ?? o.price ?? o.valor);
+    const imageUrl = asString(o.imageUrl ?? o.imagemUrl ?? o.image ?? o.photo);
+    if (!productId && !productName) return [];
+    return [{ productId, productName, quantity, unitPrice, imageUrl }];
+  });
 }
 
 export function normalizeOrdersResponse(data: unknown): SavedOrder[] {
@@ -189,7 +190,7 @@ export function normalizeOrdersResponse(data: unknown): SavedOrder[] {
           id: `${orderId}-${lineIndex}`,
           itemId: line.productId || `${orderId}-item-${lineIndex}`,
           itemName: line.productName || "Item do pedido",
-          itemImage: "",
+          itemImage: resolveImageUrl(line.imageUrl ?? ""),
           itemType,
           quantity: line.quantity,
           tableNumber,
