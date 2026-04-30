@@ -142,6 +142,7 @@ export default function PizzaDetailPage() {
 
       saveOrder({
         id: `${detail.id}-${Date.now()}`,
+        orderId: detail.id,
         itemId: detail.id,
         itemName: detail.name,
         itemImage: detail.image,

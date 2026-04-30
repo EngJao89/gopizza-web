@@ -7,6 +7,7 @@ import { normalizeUserAddresses } from "@/lib/user-addresses";
 
 export type SavedOrder = {
   id: string;
+  orderId: string;
   itemId: string;
   itemName: string;
   itemImage: string;
@@ -440,6 +441,7 @@ export function normalizeOrdersResponse(data: unknown): SavedOrder[] {
             : "pizza";
         return {
           id: `${orderId}-${lineIndex}`,
+          orderId,
           itemId: line.productId || `${orderId}-item-${lineIndex}`,
           itemName: line.productName || "Item do pedido",
           itemImage: resolveImageUrl(line.imageUrl ?? ""),
@@ -457,4 +459,12 @@ export function normalizeOrdersResponse(data: unknown): SavedOrder[] {
 export async function fetchOrders(): Promise<SavedOrder[]> {
   const { data } = await api.get<unknown>("api/orders");
   return normalizeOrdersResponse(data);
+}
+
+export async function deleteOrder(orderId: string): Promise<void> {
+  const normalized = orderId.trim();
+  if (!normalized) {
+    throw new Error("Pedido invalido para exclusao.");
+  }
+  await api.delete(`api/orders/${normalized}`);
 }
