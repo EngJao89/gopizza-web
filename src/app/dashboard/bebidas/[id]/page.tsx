@@ -100,19 +100,17 @@ export default function BebidaDetailPage() {
     try {
       const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
       const mesa = Math.max(1, Number.parseInt(tableNumber, 10) || 1);
-      const line = {
-        productId: detail.id,
-        productName: detail.titulo,
-        quantity: q,
-        unitPrice: detail.valor,
-      };
-
       await createOrder({
-        customerPhone: "",
-        deliveryAddress: "",
         notes: `Mesa ${mesa} | Item de bebida`,
-        items: [line],
-        products: [line],
+        items: [
+          {
+            productId: detail.id,
+            productName: detail.titulo,
+            quantity: q,
+            unitPrice: detail.valor,
+            imageUrl: detail.imagem,
+          },
+        ],
       });
 
       saveOrder({
@@ -133,7 +131,9 @@ export default function BebidaDetailPage() {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       const message =
-        axiosError.response?.data?.message ?? "Nao foi possivel confirmar o pedido.";
+        axiosError.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel confirmar o pedido.";
       toast.error(message);
     } finally {
       setSubmitting(false);
