@@ -1,5 +1,9 @@
+import { isAxiosError } from "axios";
+
 import api from "@/lib/axios";
+import { normalizeMeProfile } from "@/lib/current-user";
 import { resolveImageUrl } from "@/lib/pizza-flavors";
+import { normalizeUserAddresses } from "@/lib/user-addresses";
 
 export type SavedOrder = {
   id: string;
@@ -16,7 +20,7 @@ export type SavedOrder = {
 };
 
 export type OrderItemPayload = {
-  productId: string;
+  productId: string | null;
   productName: string;
   quantity: number;
   unitPrice: number;
@@ -24,21 +28,33 @@ export type OrderItemPayload = {
 };
 
 export type CreateOrderPayload = {
-  customerPhone: string;
-  deliveryAddress: string;
-  notes: string;
+  userId?: string;
+  notes?: string;
   items: OrderItemPayload[];
-  pizzas?: OrderItemPayload[];
-  products?: OrderItemPayload[];
+};
+
+type OrderItemRequest = {
+  productId: string | null;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  imageUrl: string;
 };
 
 type CreateOrderApiPayload = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  customerName: string;
   customerPhone: string;
   deliveryAddress: string;
-  notes: string;
-  itens: OrderItemPayload[];
-  pizzas?: OrderItemPayload[];
-  products?: OrderItemPayload[];
+  deliveryNeighborhood: string;
+  deliveryNumber: string;
+  status: "PENDING";
+  totalAmount: number;
+  items: OrderItemRequest[];
+  notes?: string;
 };
 
 const ORDERS_KEY = "gopizza_orders";
@@ -88,40 +104,6 @@ export function clearSavedOrders(): void {
   globalThis.window.localStorage.removeItem(ORDERS_KEY);
 }
 
-function formatPhoneForOrder(raw: string): string {
-  const digits = raw.replaceAll(/\D/g, "");
-  if (digits.length >= 11) {
-    const normalized = digits.slice(0, 11);
-    return `(${normalized.slice(0, 2)}) ${normalized.slice(2, 7)}-${normalized.slice(7)}`;
-  }
-  if (digits.length === 10) {
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-  }
-  return "(11) 99999-9999";
-}
-
-function normalizeOrderPayload(payload: CreateOrderPayload): CreateOrderApiPayload {
-  const customerPhone = formatPhoneForOrder(payload.customerPhone);
-  const deliveryAddress = payload.deliveryAddress.trim() || "Retirada no balcao";
-  const notes = payload.notes.trim() || "Pedido realizado pelo app";
-  const items = payload.items.filter(
-    (item) => item.productId && item.productName && item.quantity > 0,
-  );
-  return {
-    customerPhone,
-    deliveryAddress,
-    notes,
-    itens: items,
-    pizzas: payload.pizzas,
-    products: payload.products,
-  };
-}
-
-export async function createOrder(payload: CreateOrderPayload): Promise<void> {
-  const normalized = normalizeOrderPayload(payload);
-  await api.post("api/orders", normalized);
-}
-
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== "object") return null;
   return value as Record<string, unknown>;
@@ -142,6 +124,160 @@ function asNumber(value: unknown): number {
   return 0;
 }
 
+function digitsOnlyPhone(raw: string): string {
+  return raw.replaceAll(/\D/g, "");
+}
+
+/** Caminho relativo da API para `imageUrl` no pedido (ex.: `/api/images/...`). */
+function toOrderItemImageUrl(resolvedOrRaw: string): string {
+  const trimmed = resolvedOrRaw.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("/api/")) return trimmed;
+  const base = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").replace(
+    /\/+$/,
+    "",
+  );
+  if (trimmed.startsWith(base)) {
+    const rest = trimmed.slice(base.length);
+    return rest.startsWith("/") ? rest : `/${rest}`;
+  }
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    try {
+      return new URL(trimmed).pathname;
+    } catch {
+      return trimmed;
+    }
+  }
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+}
+
+async function resolveOrderUserId(explicit?: string): Promise<string> {
+  if (explicit?.trim()) return explicit.trim();
+  const { data } = await api.get<unknown>("api/auth/me");
+  const profile = normalizeMeProfile(data);
+  const id = profile?.id?.trim();
+  if (!id) {
+    throw new Error("Nao foi possivel identificar o usuario. Faca login novamente.");
+  }
+  return id;
+}
+
+function parseUserForOrder(data: unknown): { name: string; phone: string } {
+  const root = asRecord(data);
+  if (!root) {
+    throw new Error("Resposta invalida ao carregar usuario.");
+  }
+  const flat = asRecord(root.data) ?? root;
+  const name = asString(flat.name).trim();
+  const phoneRaw = asString(flat.phone);
+  if (!name) {
+    throw new Error("Usuario sem nome cadastrado.");
+  }
+  return { name, phone: digitsOnlyPhone(phoneRaw) || phoneRaw.trim() };
+}
+
+async function fetchUserForOrder(userId: string): Promise<{
+  name: string;
+  phone: string;
+}> {
+  const { data } = await api.get<unknown>(`api/users/${userId}`);
+  return parseUserForOrder(data);
+}
+
+async function fetchPrimaryAddressFields(userId: string): Promise<{
+  deliveryAddress: string;
+  deliveryNeighborhood: string;
+  deliveryNumber: string;
+}> {
+  let data: unknown;
+  try {
+    ({ data } = await api.get<unknown>(`api/users/${userId}/addresses`));
+  } catch (err) {
+    if (isAxiosError(err) && err.response?.status === 404) {
+      ({ data } = await api.get<unknown>(`api/${userId}/addresses`));
+    } else {
+      throw err;
+    }
+  }
+  const list = normalizeUserAddresses(data);
+  const first = list[0];
+  if (!first) {
+    return {
+      deliveryAddress: "Retirada no balcao",
+      deliveryNeighborhood: "",
+      deliveryNumber: "",
+    };
+  }
+  const street = first.street || first.address;
+  return {
+    deliveryAddress: street.trim() || "Retirada no balcao",
+    deliveryNeighborhood: first.neighborhood.trim(),
+    deliveryNumber: first.number.trim(),
+  };
+}
+
+function buildOrderItems(lines: OrderItemPayload[]): OrderItemRequest[] {
+  return lines.map((item) => {
+    const quantity = Math.max(1, item.quantity);
+    const unitPrice = item.unitPrice;
+    const lineTotal = Math.round(unitPrice * quantity * 100) / 100;
+    const imageUrl = toOrderItemImageUrl(item.imageUrl ?? "");
+    return {
+      productId: item.productId,
+      productName: item.productName.trim(),
+      quantity,
+      unitPrice,
+      lineTotal,
+      imageUrl,
+    };
+  });
+}
+
+export async function createOrder(payload: CreateOrderPayload): Promise<void> {
+  const linesIn = payload.items.filter(
+    (item) => item.productName.trim().length > 0 && item.quantity > 0,
+  );
+  if (linesIn.length === 0) {
+    throw new Error("Nenhum item valido no pedido.");
+  }
+
+  const userId = await resolveOrderUserId(payload.userId);
+  const [user, address] = await Promise.all([
+    fetchUserForOrder(userId),
+    fetchPrimaryAddressFields(userId),
+  ]);
+
+  const items = buildOrderItems(linesIn);
+  const totalAmount =
+    Math.round(items.reduce((sum, row) => sum + row.lineTotal, 0) * 100) / 100;
+
+  const now = new Date().toISOString();
+  const orderId =
+    globalThis.crypto?.randomUUID?.() ??
+    `order-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const body: CreateOrderApiPayload = {
+    id: orderId,
+    createdAt: now,
+    updatedAt: now,
+    customerName: user.name,
+    customerPhone: user.phone,
+    deliveryAddress: address.deliveryAddress,
+    deliveryNeighborhood: address.deliveryNeighborhood,
+    deliveryNumber: address.deliveryNumber,
+    status: "PENDING",
+    totalAmount,
+    items,
+  };
+
+  const notes = payload.notes?.trim();
+  if (notes) {
+    body.notes = notes;
+  }
+
+  await api.post("api/orders", body);
+}
+
 function extractOrdersArray(data: unknown): unknown[] {
   if (Array.isArray(data)) return data;
   const root = asRecord(data);
@@ -157,7 +293,8 @@ function parseOrderLines(order: Record<string, unknown>): OrderItemPayload[] {
   return lines.flatMap((line): OrderItemPayload[] => {
     const o = asRecord(line);
     if (!o) return [];
-    const productId = asString(o.productId ?? o.id);
+    const idStr = asString(o.productId ?? o.id);
+    const productId: string | null = idStr.length > 0 ? idStr : null;
     const productName = asString(o.productName ?? o.name ?? o.title);
     const quantity = Math.max(1, asNumber(o.quantity));
     const unitPrice = asNumber(o.unitPrice ?? o.price ?? o.valor);

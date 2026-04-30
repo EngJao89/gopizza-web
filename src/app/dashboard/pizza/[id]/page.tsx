@@ -118,23 +118,22 @@ export default function PizzaDetailPage() {
       const unitPrice = detail.prices[size];
       const totalValue = unitPrice * q;
 
-      const line = {
-        productId: detail.id,
-        productName: detail.name,
-        quantity: q,
-        unitPrice,
-      };
       const notesParts = [`Mesa ${mesa}`, `Tamanho ${size.toUpperCase()}`];
       if (selectedExtras.length > 0) {
         notesParts.push(`Opcionais: ${selectedExtras.join(", ")}`);
       }
 
       await createOrder({
-        customerPhone: "",
-        deliveryAddress: "",
         notes: notesParts.join(" | "),
-        items: [line],
-        pizzas: [line],
+        items: [
+          {
+            productId: detail.id,
+            productName: detail.name,
+            quantity: q,
+            unitPrice,
+            imageUrl: detail.image,
+          },
+        ],
       });
 
       saveOrder({
@@ -156,7 +155,9 @@ export default function PizzaDetailPage() {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       const message =
-        axiosError.response?.data?.message ?? "Nao foi possivel confirmar o pedido.";
+        axiosError.response?.data?.message ??
+        (error instanceof Error ? error.message : null) ??
+        "Nao foi possivel confirmar o pedido.";
       toast.error(message);
     } finally {
       setSubmitting(false);
