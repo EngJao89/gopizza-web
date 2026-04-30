@@ -2,9 +2,9 @@
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
 import { Button } from "@/components/ui/button";
-import { fetchOrders, type SavedOrder } from "@/lib/orders";
+import { deleteOrder, fetchOrders, type SavedOrder } from "@/lib/orders";
 import { toast } from "@/lib/toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 export default function PedidosPage() {
   const [orders, setOrders] = useState<SavedOrder[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [deletingOrderIds, setDeletingOrderIds] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +53,24 @@ export default function PedidosPage() {
       dateStyle: "short",
       timeStyle: "short",
     }).format(new Date(iso));
+
+  const handleDeleteOrder = async (order: SavedOrder) => {
+    const confirmed = globalThis.confirm("Deseja excluir este pedido?");
+    if (!confirmed) return;
+
+    setDeletingOrderIds((prev) =>
+      prev.includes(order.orderId) ? prev : [...prev, order.orderId],
+    );
+    try {
+      await deleteOrder(order.orderId);
+      setOrders((prev) => prev.filter((item) => item.orderId !== order.orderId));
+      toast.success("Pedido excluido com sucesso.");
+    } catch {
+      toast.error("Nao foi possivel excluir o pedido.");
+    } finally {
+      setDeletingOrderIds((prev) => prev.filter((id) => id !== order.orderId));
+    }
+  };
 
   return (
     <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col pb-24">
@@ -149,6 +168,25 @@ export default function PedidosPage() {
                     <p className="font-semibold text-[#2d8a54]">
                       {formatBrl(order.total)}
                     </p>
+                  </div>
+                  <div className="mt-3 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        void handleDeleteOrder(order);
+                      }}
+                      disabled={deletingOrderIds.includes(order.orderId)}
+                      className="rounded-lg border-[#d84a53]/40 text-[#c93b44] hover:bg-[#fff7f8]"
+                    >
+                      {deletingOrderIds.includes(order.orderId) ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="mr-2 h-4 w-4" />
+                      )}
+                      Excluir
+                    </Button>
                   </div>
                 </li>
               ))}

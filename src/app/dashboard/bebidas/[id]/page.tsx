@@ -121,6 +121,7 @@ export default function BebidaDetailPage() {
 
       saveOrder({
         id: `${detail.id}-${Date.now()}`,
+        orderId: detail.id,
         itemId: detail.id,
         itemName: detail.titulo,
         itemImage: detail.imagem,
