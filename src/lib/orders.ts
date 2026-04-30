@@ -41,15 +41,14 @@ export type CreateOrderPizzaLine = {
 };
 
 export type CreateOrderProductLine = {
-  productId: string;
-  name: string;
-  description: string;
-  availableOptions?: string[];
-  /** Bebidas: use "U" se a API exigir tamanho único. */
-  size?: string;
-  imageUrl?: string;
+  id: string;
+  marca: string;
+  titulo: string;
+  descricao: string;
+  conteudo: string;
+  valor: number;
+  imagemUrl?: string;
   quantity: number;
-  unitPrice: number;
 };
 
 export type CreateOrderPayload = {
@@ -79,7 +78,7 @@ type CreateOrderApiPayload = {
   deliveryNumber: string;
   deliveryNeighborhood: string;
   pizzas?: OrderLineApi[];
-  products?: OrderLineApi[];
+  products?: CreateOrderProductLine[];
 };
 
 const ORDERS_KEY = "gopizza_orders";
@@ -290,7 +289,7 @@ function mapLineToApi(
 export async function createOrder(payload: CreateOrderPayload): Promise<void> {
   const pizzaLines = payload.pizzas?.filter((p) => p.name.trim() && p.quantity > 0) ?? [];
   const productLines =
-    payload.products?.filter((p) => p.name.trim() && p.quantity > 0) ?? [];
+    payload.products?.filter((p) => p.titulo.trim() && p.quantity > 0) ?? [];
   if (pizzaLines.length === 0 && productLines.length === 0) {
     throw new Error("Nenhum item valido no pedido.");
   }
@@ -330,21 +329,22 @@ export async function createOrder(payload: CreateOrderPayload): Promise<void> {
   }
 
   if (productLines.length > 0) {
-    body.products = productLines.map((line) =>
-      mapLineToApi(
-        {
-          productId: line.productId,
-          name: line.name,
-          description: line.description,
-          availableOptions: line.availableOptions ?? [],
-          size: line.size ?? "U",
-          imageUrl: line.imageUrl,
-          quantity: line.quantity,
-          unitPrice: line.unitPrice,
-        },
-        orderNotes,
-      ),
-    );
+    body.products = productLines.map((line) => {
+      let imagemUrl = toOrderItemImageUrl(line.imagemUrl ?? "");
+      if (!imagemUrl) {
+        imagemUrl = ORDER_ITEM_IMAGE_FALLBACK;
+      }
+      return {
+        id: line.id.trim(),
+        marca: line.marca.trim(),
+        titulo: line.titulo.trim(),
+        descricao: joinLineDescription(line.descricao, orderNotes),
+        conteudo: line.conteudo.trim(),
+        valor: line.valor,
+        imagemUrl,
+        quantity: Math.max(1, line.quantity),
+      };
+    });
   }
 
   try {
