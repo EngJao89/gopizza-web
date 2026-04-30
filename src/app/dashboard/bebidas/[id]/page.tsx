@@ -107,14 +107,14 @@ export default function BebidaDetailPage() {
         notes: `Mesa ${mesa} | Bebida`,
         products: [
           {
-            productId: detail.id,
-            name: detail.titulo,
-            description,
-            availableOptions: [],
-            size: "U",
-            imageUrl: detail.imagem,
+            id: detail.id,
+            marca: detail.marca,
+            titulo: detail.titulo,
+            descricao: description,
+            conteudo: detail.conteudo,
+            imagemUrl: detail.imagem,
+            valor: detail.valor,
             quantity: q,
-            unitPrice: detail.valor,
           },
         ],
       });
