@@ -19,6 +19,7 @@ export type SavedOrder = {
   createdAt: string;
 };
 
+/** Linha normalizada ao ler pedidos da API (lista unificada). */
 export type OrderItemPayload = {
   productId: string | null;
   productName: string;
@@ -27,34 +28,57 @@ export type OrderItemPayload = {
   imageUrl?: string;
 };
 
-export type CreateOrderPayload = {
-  userId?: string;
-  notes?: string;
-  items: OrderItemPayload[];
-};
-
-type OrderItemRequest = {
-  productId: string | null;
-  productName: string;
+export type CreateOrderPizzaLine = {
+  productId: string;
+  name: string;
+  description: string;
+  availableOptions: string[];
+  size: "P" | "M" | "G";
+  imageUrl?: string;
   quantity: number;
   unitPrice: number;
-  lineTotal: number;
+};
+
+export type CreateOrderProductLine = {
+  productId: string;
+  name: string;
+  description: string;
+  availableOptions?: string[];
+  /** Bebidas: use "U" se a API exigir tamanho único. */
+  size?: string;
+  imageUrl?: string;
+  quantity: number;
+  unitPrice: number;
+};
+
+export type CreateOrderPayload = {
+  userId?: string;
+  /** Texto operacional (mesa, etc.); é anexado ao `description` de cada linha na API. */
+  notes?: string;
+  pizzas?: CreateOrderPizzaLine[];
+  products?: CreateOrderProductLine[];
+};
+
+/** Contrato POST api/orders (Insomnia / backend). */
+type OrderLineApi = {
+  productId: string;
+  name: string;
+  description: string;
+  availableOptions: string[];
+  size: string;
   imageUrl: string;
+  quantity: number;
+  unitPrice: number;
 };
 
 type CreateOrderApiPayload = {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
   customerName: string;
   customerPhone: string;
   deliveryAddress: string;
-  deliveryNeighborhood: string;
   deliveryNumber: string;
-  status: "PENDING";
-  totalAmount: number;
-  items: OrderItemRequest[];
-  notes?: string;
+  deliveryNeighborhood: string;
+  pizzas?: OrderLineApi[];
+  products?: OrderLineApi[];
 };
 
 const ORDERS_KEY = "gopizza_orders";
@@ -173,7 +197,13 @@ function parseUserForOrder(data: unknown): { name: string; phone: string } {
   if (!name) {
     throw new Error("Usuario sem nome cadastrado.");
   }
-  return { name, phone: digitsOnlyPhone(phoneRaw) || phoneRaw.trim() };
+  const phone = digitsOnlyPhone(phoneRaw);
+  if (phone.length < 10) {
+    throw new Error(
+      "Cadastre um telefone valido no perfil (minimo 10 digitos) para concluir o pedido.",
+    );
+  }
+  return { name, phone };
 }
 
 async function fetchUserForOrder(userId: string): Promise<{
@@ -204,40 +234,63 @@ async function fetchPrimaryAddressFields(userId: string): Promise<{
   if (!first) {
     return {
       deliveryAddress: "Retirada no balcao",
-      deliveryNeighborhood: "",
-      deliveryNumber: "",
+      deliveryNeighborhood: "-",
+      deliveryNumber: "-",
     };
   }
   const street = first.street || first.address;
+  const neighborhood = first.neighborhood.trim();
+  const number = first.number.trim();
   return {
     deliveryAddress: street.trim() || "Retirada no balcao",
-    deliveryNeighborhood: first.neighborhood.trim(),
-    deliveryNumber: first.number.trim(),
+    deliveryNeighborhood: neighborhood.length > 0 ? neighborhood : "-",
+    deliveryNumber: number.length > 0 ? number : "-",
   };
 }
 
-function buildOrderItems(lines: OrderItemPayload[]): OrderItemRequest[] {
-  return lines.map((item) => {
-    const quantity = Math.max(1, item.quantity);
-    const unitPrice = item.unitPrice;
-    const lineTotal = Math.round(unitPrice * quantity * 100) / 100;
-    const imageUrl = toOrderItemImageUrl(item.imageUrl ?? "");
-    return {
-      productId: item.productId,
-      productName: item.productName.trim(),
-      quantity,
-      unitPrice,
-      lineTotal,
-      imageUrl,
-    };
-  });
+const ORDER_ITEM_IMAGE_FALLBACK = "/api/images/placeholder.png";
+
+function joinLineDescription(description: string, orderNotes?: string): string {
+  const d = description.trim();
+  const n = orderNotes?.trim();
+  if (d && n) return `${d} | ${n}`;
+  return d || n || "-";
+}
+
+function mapLineToApi(
+  line: {
+    productId: string;
+    name: string;
+    description: string;
+    availableOptions: string[];
+    size: string;
+    imageUrl?: string;
+    quantity: number;
+    unitPrice: number;
+  },
+  orderNotes?: string,
+): OrderLineApi {
+  let imageUrl = toOrderItemImageUrl(line.imageUrl ?? "");
+  if (!imageUrl) {
+    imageUrl = ORDER_ITEM_IMAGE_FALLBACK;
+  }
+  return {
+    productId: line.productId.trim(),
+    name: line.name.trim(),
+    description: joinLineDescription(line.description, orderNotes),
+    availableOptions: [...line.availableOptions],
+    size: line.size,
+    imageUrl,
+    quantity: Math.max(1, line.quantity),
+    unitPrice: line.unitPrice,
+  };
 }
 
 export async function createOrder(payload: CreateOrderPayload): Promise<void> {
-  const linesIn = payload.items.filter(
-    (item) => item.productName.trim().length > 0 && item.quantity > 0,
-  );
-  if (linesIn.length === 0) {
+  const pizzaLines = payload.pizzas?.filter((p) => p.name.trim() && p.quantity > 0) ?? [];
+  const productLines =
+    payload.products?.filter((p) => p.name.trim() && p.quantity > 0) ?? [];
+  if (pizzaLines.length === 0 && productLines.length === 0) {
     throw new Error("Nenhum item valido no pedido.");
   }
 
@@ -247,35 +300,97 @@ export async function createOrder(payload: CreateOrderPayload): Promise<void> {
     fetchPrimaryAddressFields(userId),
   ]);
 
-  const items = buildOrderItems(linesIn);
-  const totalAmount =
-    Math.round(items.reduce((sum, row) => sum + row.lineTotal, 0) * 100) / 100;
-
-  const now = new Date().toISOString();
-  const orderId =
-    globalThis.crypto?.randomUUID?.() ??
-    `order-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const orderNotes = payload.notes?.trim();
 
   const body: CreateOrderApiPayload = {
-    id: orderId,
-    createdAt: now,
-    updatedAt: now,
     customerName: user.name,
     customerPhone: user.phone,
     deliveryAddress: address.deliveryAddress,
-    deliveryNeighborhood: address.deliveryNeighborhood,
     deliveryNumber: address.deliveryNumber,
-    status: "PENDING",
-    totalAmount,
-    items,
+    deliveryNeighborhood: address.deliveryNeighborhood,
   };
 
-  const notes = payload.notes?.trim();
-  if (notes) {
-    body.notes = notes;
+  if (pizzaLines.length > 0) {
+    body.pizzas = pizzaLines.map((line) =>
+      mapLineToApi(
+        {
+          productId: line.productId,
+          name: line.name,
+          description: line.description,
+          availableOptions: line.availableOptions,
+          size: line.size,
+          imageUrl: line.imageUrl,
+          quantity: line.quantity,
+          unitPrice: line.unitPrice,
+        },
+        orderNotes,
+      ),
+    );
   }
 
-  await api.post("api/orders", body);
+  if (productLines.length > 0) {
+    body.products = productLines.map((line) =>
+      mapLineToApi(
+        {
+          productId: line.productId,
+          name: line.name,
+          description: line.description,
+          availableOptions: line.availableOptions ?? [],
+          size: line.size ?? "U",
+          imageUrl: line.imageUrl,
+          quantity: line.quantity,
+          unitPrice: line.unitPrice,
+        },
+        orderNotes,
+      ),
+    );
+  }
+
+  try {
+    await api.post("api/orders", body);
+  } catch (err) {
+    if (isAxiosError(err) && err.response?.status === 400) {
+      const data = err.response.data;
+      const detail = formatOrderApiValidationMessage(data);
+      if (detail) {
+        err.message = detail;
+      }
+    }
+    throw err;
+  }
+}
+
+function formatOrderApiValidationMessage(data: unknown): string | null {
+  if (data == null) return null;
+  if (typeof data === "string" && data.trim()) return data.trim();
+  if (typeof data !== "object") return null;
+  const o = data as Record<string, unknown>;
+  const direct =
+    o.message ?? o.error ?? o.detail ?? o.title ?? o.error_description;
+  if (typeof direct === "string" && direct.trim()) return direct.trim();
+
+  const errors = o.errors;
+  if (Array.isArray(errors)) {
+    const parts = errors
+      .map((e) => {
+        if (typeof e === "string") return e;
+        if (e && typeof e === "object") {
+          const r = e as Record<string, unknown>;
+          const dflt = r.defaultMessage ?? r.message;
+          const field = r.field ?? r.property ?? r.path;
+          if (typeof dflt === "string" && dflt.trim()) {
+            return typeof field === "string" && field
+              ? `${field}: ${dflt.trim()}`
+              : dflt.trim();
+          }
+        }
+        return null;
+      })
+      .filter((x): x is string => typeof x === "string" && x.length > 0);
+    if (parts.length > 0) return parts.join("; ");
+  }
+
+  return null;
 }
 
 function extractOrdersArray(data: unknown): unknown[] {

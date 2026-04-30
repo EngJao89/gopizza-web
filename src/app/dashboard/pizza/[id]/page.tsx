@@ -30,6 +30,12 @@ const SIZE_OPTIONS: { key: PizzaSize; label: string; code: string }[] = [
   { key: "grande", label: "Grande", code: "G" },
 ];
 
+const PIZZA_SIZE_TO_API: Record<PizzaSize, "P" | "M" | "G"> = {
+  pequena: "P",
+  media: "M",
+  grande: "G",
+};
+
 function formatBrl(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -118,20 +124,18 @@ export default function PizzaDetailPage() {
       const unitPrice = detail.prices[size];
       const totalValue = unitPrice * q;
 
-      const notesParts = [`Mesa ${mesa}`, `Tamanho ${size.toUpperCase()}`];
-      if (selectedExtras.length > 0) {
-        notesParts.push(`Opcionais: ${selectedExtras.join(", ")}`);
-      }
-
       await createOrder({
-        notes: notesParts.join(" | "),
-        items: [
+        notes: `Mesa ${mesa}`,
+        pizzas: [
           {
             productId: detail.id,
-            productName: detail.name,
+            name: detail.name,
+            description: detail.description,
+            availableOptions: selectedExtras,
+            size: PIZZA_SIZE_TO_API[size],
+            imageUrl: detail.image,
             quantity: q,
             unitPrice,
-            imageUrl: detail.image,
           },
         ],
       });

@@ -100,15 +100,21 @@ export default function BebidaDetailPage() {
     try {
       const q = Math.max(1, Number.parseInt(quantity, 10) || 1);
       const mesa = Math.max(1, Number.parseInt(tableNumber, 10) || 1);
+      const description =
+        [detail.descricao, detail.conteudo].filter(Boolean).join(" — ").trim() || "-";
+
       await createOrder({
-        notes: `Mesa ${mesa} | Item de bebida`,
-        items: [
+        notes: `Mesa ${mesa} | Bebida`,
+        products: [
           {
             productId: detail.id,
-            productName: detail.titulo,
+            name: detail.titulo,
+            description,
+            availableOptions: [],
+            size: "U",
+            imageUrl: detail.imagem,
             quantity: q,
             unitPrice: detail.valor,
-            imageUrl: detail.imagem,
           },
         ],
       });
