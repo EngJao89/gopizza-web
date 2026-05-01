@@ -1,4 +1,5 @@
 import { DashboardAuthGuard } from "@/components/dashboard/dashboard-auth-guard";
+import { DashboardLayoutShell } from "@/components/dashboard/dashboard-layout-shell";
 import { Playfair_Display } from "next/font/google";
 import type { Metadata } from "next";
 
@@ -19,7 +20,9 @@ export default function DashboardLayout({
     <div
       className={`${playfair.variable} min-h-screen bg-[#ecebea] text-[#3d2c29] [--font-serif:var(--font-playfair)]`}
     >
-      <DashboardAuthGuard>{children}</DashboardAuthGuard>
+      <DashboardAuthGuard>
+        <DashboardLayoutShell>{children}</DashboardLayoutShell>
+      </DashboardAuthGuard>
     </div>
   );
 }

@@ -3,12 +3,6 @@
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
 import { ProfileAddressForm } from "@/components/dashboard/profile-address-form";
 import { ProfileEditForm } from "@/components/dashboard/profile-edit-form";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
 import api from "@/lib/axios";
 import {
   normalizeMeProfile,
@@ -55,28 +49,19 @@ export default function ProfilePage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#ecebea] pb-24">
-      <header className="relative z-10 flex w-full shrink-0 items-center gap-3 bg-[#c93b44] px-4 py-4 shadow-sm md:px-8">
-        <NavigationMenu viewport={false}>
-          <NavigationMenuList className="flex-none justify-start gap-0">
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Link
-                  href="/dashboard"
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50"
-                  aria-label="Voltar ao cardápio"
-                >
-                  <ChevronLeft className="h-6 w-6" strokeWidth={2} />
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <h1 className="font-serif text-xl font-semibold tracking-tight text-white md:text-2xl">
-          Meu perfil
-        </h1>
-      </header>
-
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8">
+        <div className="mb-6 flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#e8e4e2] bg-white text-[#3d2c29] shadow-sm transition hover:bg-[#faf9f9] focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
+            aria-label="Voltar ao cardápio"
+          >
+            <ChevronLeft className="h-6 w-6" strokeWidth={2} />
+          </Link>
+          <h1 className="font-serif text-2xl font-semibold text-[#3d2c29] md:text-3xl">
+            Meu perfil
+          </h1>
+        </div>
         {status === "loading" && (
           <div className="flex justify-center py-16">
             <Loader2

@@ -1,19 +1,14 @@
 "use client";
 
 import { DashboardBottomNav } from "@/components/dashboard/dashboard-bottom-nav";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/axios";
-import { getToken, getUserName, setUserName } from "@/lib/auth";
-import { normalizeMeResponse } from "@/lib/current-user";
-import { logoutFromApp } from "@/lib/logout";
 import { normalizeProductsResponse, type ProductCard } from "@/lib/products";
 import { toast } from "@/lib/toast";
 import { ChevronRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 function formatBrl(value: number): string {
@@ -24,46 +19,11 @@ function formatBrl(value: number): string {
 }
 
 export default function BebidasPage() {
-  const router = useRouter();
-  const [displayName, setDisplayName] = useState("Garçom");
-  const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [items, setItems] = useState<ProductCard[]>([]);
   const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
-
-  useEffect(() => {
-    const fromStorage = getUserName();
-    if (fromStorage) {
-      setDisplayName(fromStorage);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!getToken()) return;
-
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const { data } = await api.get<unknown>("api/auth/me");
-        const user = normalizeMeResponse(data);
-        if (!cancelled && user) {
-          setDisplayName(user.name);
-          setUserPhotoUrl(user.photoUrl);
-          setUserName(user.name);
-        }
-      } catch {
-        // Mantem nome do login / localStorage.
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,17 +50,6 @@ export default function BebidasPage() {
     };
   }, []);
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await logoutFromApp();
-      toast.success("Voce saiu do sistema.");
-      router.replace("/");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
@@ -119,13 +68,6 @@ export default function BebidasPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col pb-24">
-      <DashboardHeader
-        displayName={displayName}
-        userPhotoUrl={userPhotoUrl}
-        isLoggingOut={isLoggingOut}
-        onLogout={handleLogout}
-      />
-
       <div className="relative z-20 -mt-10 w-full px-4 md:-mt-12 md:px-8">
         <div className="mx-auto max-w-5xl">
           <div className="flex gap-2 rounded-xl bg-white p-1.5 shadow-md">

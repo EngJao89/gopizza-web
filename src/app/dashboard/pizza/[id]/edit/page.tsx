@@ -198,22 +198,24 @@ export default function EditPizzaPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] pb-8">
-      <header className="bg-[#c93b44] px-4 py-4 text-white shadow-sm md:px-8">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-between">
+      <header className="border-b border-[#e8e4e2] bg-white px-4 py-3 shadow-sm md:px-8">
+        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3">
           <Link
             href={`/dashboard/pizza/${id}`}
-            className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/50"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#e8e4e2] bg-[#faf9f9] text-[#3d2c29] transition hover:bg-[#f0eeed] focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
             aria-label="Voltar"
           >
             <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
           </Link>
-          <h1 className="font-serif text-3xl font-semibold leading-none">Editar pizza</h1>
+          <h1 className="min-w-0 flex-1 text-center font-serif text-xl font-semibold leading-tight text-[#3d2c29] md:text-2xl">
+            Editar pizza
+          </h1>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             disabled={deleting || isSubmitting}
             onClick={() => void handleDelete()}
-            className="text-base text-white hover:bg-white/10 hover:text-white"
+            className="shrink-0 rounded-lg border-[#f5d3d6] text-[#a7404a] hover:bg-[#fff7f8]"
           >
             {deleting ? "Excluindo..." : "Deletar"}
           </Button>
