@@ -171,15 +171,15 @@ export default function BebidaDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#ecebea] pb-8">
-      <header className="relative bg-[#c93b44] px-4 pb-28 pt-4 md:px-8 md:pb-32">
-        <div className="mx-auto flex max-w-lg items-start">
+      <div className="px-4 pt-3 md:px-8">
+        <div className="mx-auto max-w-lg">
           <NavigationMenu viewport={false} className="max-w-none">
             <NavigationMenuList className="justify-start">
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
                     href="/dashboard/bebidas"
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border-0 bg-white/20 text-white hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#e8e4e2] bg-white text-[#3d2c29] shadow-sm transition hover:bg-[#faf9f9] focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
                     aria-label="Voltar para bebidas"
                   >
                     <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
@@ -189,23 +189,23 @@ export default function BebidaDetailPage() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
+      </div>
 
-        <div className="pointer-events-none absolute bottom-0 left-1/2 z-10 flex -translate-x-1/2 translate-y-1/2 justify-center">
-          <div className="relative h-44 w-44 overflow-hidden rounded-full border-4 border-white shadow-lg md:h-52 md:w-52">
-            <Image
-              src={detail.imagem}
-              alt={detail.titulo}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 176px, 208px"
-              priority
-              unoptimized
-            />
-          </div>
+      <div className="flex justify-center px-4 pb-2 pt-5">
+        <div className="relative h-44 w-44 overflow-hidden rounded-full border-4 border-white shadow-lg md:h-52 md:w-52">
+          <Image
+            src={detail.imagem}
+            alt={detail.titulo}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 176px, 208px"
+            priority
+            unoptimized
+          />
         </div>
-      </header>
+      </div>
 
-      <main className="mx-auto mt-24 w-full max-w-lg flex-1 px-4 pt-2 md:mt-28">
+      <main className="mx-auto mt-2 w-full max-w-lg flex-1 px-4 pt-2">
         <div className="rounded-b-2xl bg-white px-4 pb-8 pt-2 shadow-sm md:px-6">
           <h1 className="font-serif text-3xl font-semibold text-[#3d2c29] md:text-4xl">
             {detail.titulo}
