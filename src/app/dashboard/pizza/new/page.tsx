@@ -2,12 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
-import { ChevronLeft, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
+import { useDashboardHeaderToolbar } from "@/components/dashboard/dashboard-header-toolbar-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,7 @@ import {
 import { toast } from "@/lib/toast";
 
 export default function NewPizzaPage() {
+  const { setConfig: setHeaderToolbar } = useDashboardHeaderToolbar();
   const [fileInputKey, setFileInputKey] = useState(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -56,11 +57,16 @@ export default function NewPizzaPage() {
     };
   }, [imagePreviewUrl]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     reset();
     setImageFile(null);
     setFileInputKey((prev) => prev + 1);
-  };
+  }, [reset]);
+
+  useEffect(() => {
+    setHeaderToolbar({ title: "Cadastrar pizza" });
+    return () => setHeaderToolbar(null);
+  }, [setHeaderToolbar]);
 
   const onSubmit = async (data: PizzaCreateFormValues) => {
     const basePayload = {
@@ -105,34 +111,22 @@ export default function NewPizzaPage() {
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] pb-8">
-      <header className="border-b border-[#e8e4e2] bg-white px-4 py-3 shadow-sm md:px-8">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3">
-          <Link
-            href="/dashboard"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[#e8e4e2] bg-[#faf9f9] text-[#3d2c29] transition hover:bg-[#f0eeed] focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
-            aria-label="Voltar"
-          >
-            <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
-          </Link>
-          <h1 className="min-w-0 flex-1 text-center font-serif text-xl font-semibold leading-tight text-[#3d2c29] md:text-2xl">
-            Cadastrar Pizza
-          </h1>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClear}
-            className="shrink-0 rounded-lg border-[#e8e4e2] text-[#3d2c29] hover:bg-[#faf9f9]"
-          >
-            Limpar
-          </Button>
-        </div>
-      </header>
-
       <main className="mx-auto mt-6 w-full max-w-2xl px-4 md:px-8">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 rounded-2xl bg-white p-6 shadow-sm"
         >
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClear}
+              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-base font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
+            >
+              Limpar
+            </Button>
+          </div>
+
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#8b6f75] bg-[#fcfbfb] text-center">
               {imagePreviewUrl ? (
