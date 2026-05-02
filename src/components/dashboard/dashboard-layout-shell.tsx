@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardHeaderToolbarProvider } from "@/components/dashboard/dashboard-header-toolbar-context";
 import api from "@/lib/axios";
 import { getToken, getUserName, setUserName } from "@/lib/auth";
 import { normalizeMeResponse } from "@/lib/current-user";
@@ -63,14 +64,16 @@ export function DashboardLayoutShell({ children }: DashboardLayoutShellProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <DashboardHeader
-        displayName={displayName}
-        userPhotoUrl={userPhotoUrl}
-        isLoggingOut={isLoggingOut}
-        onLogout={handleLogout}
-      />
-      <div className="flex flex-1 flex-col">{children}</div>
-    </div>
+    <DashboardHeaderToolbarProvider>
+      <div className="flex min-h-screen flex-col">
+        <DashboardHeader
+          displayName={displayName}
+          userPhotoUrl={userPhotoUrl}
+          isLoggingOut={isLoggingOut}
+          onLogout={handleLogout}
+        />
+        <div className="flex flex-1 flex-col">{children}</div>
+      </div>
+    </DashboardHeaderToolbarProvider>
   );
 }
