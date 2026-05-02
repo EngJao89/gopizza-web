@@ -58,12 +58,9 @@ export default function NewProductPage() {
   }, [reset]);
 
   useEffect(() => {
-    setHeaderToolbar({
-      title: "Cadastrar produto",
-      onClear: handleClear,
-    });
+    setHeaderToolbar({ title: "Cadastrar produto" });
     return () => setHeaderToolbar(null);
-  }, [setHeaderToolbar, handleClear]);
+  }, [setHeaderToolbar]);
 
   const onSubmit = async (data: ProductCreateFormValues) => {
     if (!imageFile) {
@@ -104,6 +101,17 @@ export default function NewProductPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 rounded-2xl bg-white p-6 shadow-sm"
         >
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClear}
+              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-base font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
+            >
+              Limpar
+            </Button>
+          </div>
+
           <div className="flex flex-wrap items-center gap-4">
             <div className="relative flex h-44 w-44 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[#8b6f75] bg-[#fcfbfb] text-center">
               {imagePreviewUrl ? (

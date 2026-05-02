@@ -12,7 +12,6 @@ import {
 
 export type DashboardHeaderToolbarConfig = Readonly<{
   title: string;
-  onClear: () => void;
 }>;
 
 type DashboardHeaderToolbarContextValue = Readonly<{
