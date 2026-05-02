@@ -9,7 +9,6 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { Button } from "@/components/ui/button";
 import { ClipboardList, ChevronLeft, LogOut, MoreVertical, Smile } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +31,15 @@ export function DashboardHeader({
   return (
     <header className="relative z-10 grid w-full shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-x-2 bg-[#c93b44] px-4 pb-14 pt-4 md:gap-x-4 md:px-8 md:pb-16">
       <div className="flex min-w-0 items-center gap-2 md:gap-3">
+        {toolbar ? (
+          <Link
+            href="/dashboard"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+            aria-label="Voltar"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2.5} />
+          </Link>
+        ) : null}
         <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#f5d547] shadow-sm">
           {userPhotoUrl ? (
             <Image
@@ -55,28 +63,11 @@ export function DashboardHeader({
         </h1>
       </div>
 
-      <div className="flex max-w-[min(100vw-10rem,28rem)] items-center justify-center gap-2 md:gap-3">
+      <div className="flex max-w-[min(100vw-10rem,28rem)] items-center justify-center px-2">
         {toolbar ? (
-          <>
-            <Link
-              href="/dashboard"
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
-              aria-label="Voltar"
-            >
-              <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2.5} />
-            </Link>
-            <h2 className="min-w-0 flex-1 truncate text-center font-serif text-base font-semibold leading-tight text-white md:text-lg lg:text-xl">
-              {toolbar.title}
-            </h2>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={toolbar.onClear}
-              className="h-11 shrink-0 rounded-lg border-0 bg-white/15 px-3 text-sm font-medium text-white shadow-none hover:bg-white/25 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 md:px-4"
-            >
-              Limpar
-            </Button>
-          </>
+          <h2 className="min-w-0 truncate text-center font-serif text-base font-semibold leading-tight text-white md:text-lg lg:text-xl">
+            {toolbar.title}
+          </h2>
         ) : null}
       </div>
 
