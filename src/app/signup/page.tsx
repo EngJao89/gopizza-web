@@ -100,14 +100,14 @@ export default function SignUpPage() {
                 type="text"
                 placeholder="Nome completo"
                 autoComplete="name"
-                className={`${authFieldClassName} h-auto`}
+                className={`${authFieldClassName} h-auto text-xs`}
                 {...register("name", {
                   required: "Informe seu nome",
                   minLength: { value: 2, message: "Nome muito curto" },
                 })}
               />
               {errors.name && (
-                <p className="mt-2 text-sm text-amber-100">
+                <p className="mt-2 text-xs text-amber-100">
                   {errors.name.message}
                 </p>
               )}
@@ -118,7 +118,7 @@ export default function SignUpPage() {
             type="email"
             placeholder="E-mail"
             autoComplete="email"
-            className={`${authFieldClassName} h-auto`}
+            className={`${authFieldClassName} h-auto text-xs`}
             {...register("email", {
               required: "Informe seu e-mail",
               pattern: {
@@ -128,7 +128,7 @@ export default function SignUpPage() {
             })}
           />
           {errors.email && (
-            <p className="mt-2 text-sm text-amber-100">{errors.email.message}</p>
+            <p className="mt-2 text-xs text-amber-100">{errors.email.message}</p>
           )}
         </div>
 
@@ -137,7 +137,7 @@ export default function SignUpPage() {
             type="tel"
             placeholder="Telefone"
             autoComplete="tel"
-            className={`${authFieldClassName} h-auto`}
+            className={`${authFieldClassName} h-auto text-xs`}
             {...register("phone", {
               required: "Informe seu telefone",
               validate: (v) =>
@@ -147,7 +147,7 @@ export default function SignUpPage() {
             })}
           />
           {errors.phone && (
-            <p className="mt-2 text-sm text-amber-100">{errors.phone.message}</p>
+            <p className="mt-2 text-xs text-amber-100">{errors.phone.message}</p>
           )}
         </div>
 
@@ -157,7 +157,7 @@ export default function SignUpPage() {
             inputMode="numeric"
             placeholder="CPF"
             autoComplete="off"
-            className={`${authFieldClassName} h-auto`}
+            className={`${authFieldClassName} h-auto text-xs`}
             {...register("cpf", {
               required: "Informe seu CPF",
               validate: (v) => (isValidCPF(v) ? true : "CPF invalido"),
@@ -211,7 +211,7 @@ export default function SignUpPage() {
             type="password"
             placeholder="Senha"
             autoComplete="new-password"
-            className={`${authFieldClassName} h-auto`}
+            className={`${authFieldClassName} h-auto text-xs`}
             {...register("password", {
               required: "Informe sua senha",
               minLength: {
@@ -237,7 +237,7 @@ export default function SignUpPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="mt-2 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-2 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-sm font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting ? "Cadastrando..." : "Cadastrar"}
             </Button>

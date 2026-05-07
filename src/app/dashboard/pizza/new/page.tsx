@@ -121,7 +121,7 @@ export default function NewPizzaPage() {
               type="button"
               variant="outline"
               onClick={handleClear}
-              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-base font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
+              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-sm font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
             >
               Limpar
             </Button>
@@ -156,7 +156,7 @@ export default function NewPizzaPage() {
               />
               <Button
                 asChild
-                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-2xl font-semibold text-white hover:bg-[#be3340]"
+                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-sm font-semibold text-white hover:bg-[#be3340]"
               >
                 <label htmlFor="pizza-image-file" className="cursor-pointer">
                   <Upload className="h-5 w-5" />
@@ -248,7 +248,7 @@ export default function NewPizzaPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-3xl font-semibold text-white hover:bg-[#447b2c]"
+            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-sm font-semibold text-white hover:bg-[#447b2c]"
           >
             {isSubmitting ? "Cadastrando..." : "Cadastrar pizza"}
           </Button>

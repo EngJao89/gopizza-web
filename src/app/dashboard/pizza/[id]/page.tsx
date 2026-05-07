@@ -242,7 +242,7 @@ export default function PizzaDetailPage() {
           <Button
             asChild
             variant="outline"
-            className="mt-4 w-full rounded-xl border-[#c93b44]/50 py-3 text-base font-semibold text-[#c93b44] hover:bg-[#fff8f8]"
+            className="mt-4 w-full rounded-xl border-[#c93b44]/50 py-3 text-sm font-semibold text-[#c93b44] hover:bg-[#fff8f8]"
           >
             <Link href={`/dashboard/pizza/${id}/edit`}>Alterar pizza</Link>
           </Button>
@@ -370,7 +370,7 @@ export default function PizzaDetailPage() {
             type="button"
             disabled={submitting}
             onClick={handleConfirm}
-            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-base font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
+            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-sm font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
           >
             {submitting ? "Confirmando..." : "Confirmar pedido"}
           </Button>

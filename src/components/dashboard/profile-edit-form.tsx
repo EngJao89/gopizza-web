@@ -253,7 +253,7 @@ export function ProfileEditForm({ profile, onUpdated }: ProfileEditFormProps) {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 h-auto min-h-11 w-full rounded-xl bg-[#c93b44] px-4 py-3 text-base font-semibold text-white hover:bg-[#b3343c] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-2 h-auto min-h-11 w-full rounded-xl bg-[#c93b44] px-4 py-3 text-sm font-semibold text-white hover:bg-[#b3343c] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isSubmitting ? "Salvando..." : "Salvar alteracoes"}
       </Button>

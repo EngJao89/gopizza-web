@@ -270,7 +270,7 @@ export default function BebidaDetailPage() {
             type="button"
             disabled={submitting || detail.valor === null}
             onClick={handleConfirm}
-            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-base font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
+            className="mt-6 h-auto min-h-14 w-full rounded-xl bg-[#2d8a54] py-4 text-sm font-semibold text-white hover:bg-[#257347] disabled:opacity-60"
           >
             {submitting ? "Confirmando..." : "Confirmar pedido"}
           </Button>
