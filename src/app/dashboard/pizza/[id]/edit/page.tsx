@@ -262,7 +262,7 @@ export default function EditPizzaPage() {
               />
               <Button
                 asChild
-                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-2xl font-semibold text-white hover:bg-[#be3340]"
+                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-sm font-semibold text-white hover:bg-[#be3340]"
               >
                 <label htmlFor="pizza-edit-image-file" className="cursor-pointer">
                   <Upload className="h-5 w-5" />
@@ -354,7 +354,7 @@ export default function EditPizzaPage() {
           <Button
             type="submit"
             disabled={isSubmitting || deleting}
-            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-3xl font-semibold text-white hover:bg-[#447b2c]"
+            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-sm font-semibold text-white hover:bg-[#447b2c]"
           >
             {isSubmitting ? "Salvando..." : "Atualizar pizza"}
           </Button>
