@@ -74,9 +74,9 @@ export function DashboardHeader({
       <div className="flex items-center justify-end gap-2">
         <Link
           href="/dashboard/pedidos"
-          className="inline-flex h-11 items-center gap-2 rounded-lg bg-white/15 px-3 text-xs font-medium text-white transition hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
+          className="inline-flex h-11 items-center gap-2 rounded-lg bg-white/15 px-3 text-sm font-medium text-white transition hover:bg-white/25 focus-visible:ring-2 focus-visible:ring-white/40"
         >
-          <ClipboardList className="h-3 w-3" aria-hidden />
+          <ClipboardList className="h-4 w-4" aria-hidden />
           Pedidos
         </Link>
         <Menubar className="h-auto shrink-0 border-0 bg-transparent p-0 shadow-none">
