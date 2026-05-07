@@ -14,7 +14,7 @@ export function DashboardBottomNav({
 }: Props) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[#e8e4e2] bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-      <div className="mx-auto flex max-w-5xl items-center justify-around gap-1 py-3 text-xs font-medium sm:text-sm md:py-4">
+      <div className="mx-auto flex max-w-5xl items-center justify-around gap-1 py-3 text-xs font-medium sm:text-xs md:py-4">
         <Link
           href="/dashboard"
           className={
