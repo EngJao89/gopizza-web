@@ -72,7 +72,7 @@ export default function DashboardPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Buscar pizza..."
-                className="h-auto w-full rounded-lg border-none bg-white py-3 pl-4 pr-10 text-[#3d2c29] shadow-none outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
+                className="h-auto w-full rounded-lg border-none bg-white py-3 pl-4 pr-10 text-xs text-[#3d2c29] shadow-none outline-none ring-0 focus:ring-2 focus:ring-[#c93b44]/30 focus-visible:border-transparent focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
               />
               {query ? (
                 <Button
@@ -102,10 +102,10 @@ export default function DashboardPage() {
       <main className="mx-auto mt-6 w-full max-w-5xl flex-1 px-4 md:px-8">
         <div className="rounded-t-xl bg-white px-4 pb-6 pt-2 shadow-sm md:px-6">
           <div className="flex items-baseline justify-between border-b border-[#e8e4e2] pb-3 pt-2">
-            <h2 className="font-serif text-2xl font-semibold text-[#3d2c29]">
+            <h2 className="font-serif text-base font-semibold text-[#3d2c29]">
               Cardápio
             </h2>
-            <span className="text-sm text-[#8a7d79]">{countLabel}</span>
+            <span className="text-xs text-[#8a7d79]">{countLabel}</span>
           </div>
 
           {loadStatus === "loading" && (
@@ -143,10 +143,10 @@ export default function DashboardPage() {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-serif text-lg font-semibold text-[#3d2c29]">
+                        <p className="font-serif text-sm font-semibold text-[#3d2c29]">
                           {item.name}
                         </p>
-                        <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-[#6b5e5a]">
+                        <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-[#6b5e5a]">
                           {item.description}
                         </p>
                       </div>
