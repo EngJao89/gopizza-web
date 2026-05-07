@@ -26,7 +26,7 @@ export function AuthSplitLayout({ title, children }: AuthSplitLayoutProps) {
 
         <div className="flex items-center justify-center p-6 md:p-10 lg:p-14">
           <div className="w-full max-w-md">
-            <h1 className="mb-6 text-4xl font-semibold text-white md:mb-8">{title}</h1>
+            <h1 className="mb-6 text-2xl font-semibold text-white md:mb-8">{title}</h1>
             <div className="max-h-[min(70vh,calc(100vh-12rem))] overflow-y-auto pr-1 [-ms-overflow-style:none] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/25">
               {children}
             </div>

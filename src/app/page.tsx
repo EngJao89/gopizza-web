@@ -64,7 +64,7 @@ export default function Home() {
               <Input
                 type="email"
                 placeholder="E-mail"
-                className={`${authFieldClassName} h-auto`}
+                className={`${authFieldClassName} h-auto text-xs`}
                 {...register("email", {
                   required: "Informe seu e-mail",
                   pattern: {
@@ -74,7 +74,7 @@ export default function Home() {
                 })}
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-amber-100">
+                <p className="mt-2 text-xs text-amber-100">
                   {errors.email.message}
                 </p>
               )}
@@ -84,7 +84,7 @@ export default function Home() {
               <Input
                 type="password"
                 placeholder="Senha"
-                className={`${authFieldClassName} h-auto`}
+                className={`${authFieldClassName} h-auto text-xs`}
                 {...register("password", {
                   required: "Informe sua senha",
                   minLength: {
@@ -94,7 +94,7 @@ export default function Home() {
                 })}
               />
               {errors.password && (
-                <p className="mt-2 text-sm text-amber-100">
+                <p className="mt-2 text-xs text-amber-100">
                   {errors.password.message}
                 </p>
               )}
@@ -103,14 +103,14 @@ export default function Home() {
             <div className="flex items-center justify-between gap-4 pt-1">
               <Link
                 href="/signup"
-                className="text-base text-white/90 underline-offset-2 transition hover:text-white hover:underline"
+                className="text-sm text-white/90 underline-offset-2 transition hover:text-white hover:underline"
               >
                 Criar conta
               </Link>
               <Button
                 type="button"
                 variant="ghost"
-                className="text-base text-white/90 hover:bg-white/10 hover:text-white"
+                className="text-sm text-white/90 hover:bg-white/10 hover:text-white"
               >
                 Esqueci minha senha
               </Button>
@@ -119,7 +119,7 @@ export default function Home() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="mt-3 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-lg font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-3 h-auto min-h-14 w-full rounded-xl bg-rose-500 px-4 py-4 text-sm font-semibold text-white hover:bg-rose-400 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting ? "Entrando..." : "Entrar"}
             </Button>
