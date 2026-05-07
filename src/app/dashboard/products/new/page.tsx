@@ -106,7 +106,7 @@ export default function NewProductPage() {
               type="button"
               variant="outline"
               onClick={handleClear}
-              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-base font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
+              className="rounded-2xl border-[#e2e2e8] bg-white px-5 py-2.5 text-xs font-medium text-[#5a3a42] hover:bg-[#faf9f9]"
             >
               Limpar
             </Button>
@@ -123,7 +123,7 @@ export default function NewProductPage() {
                   unoptimized
                 />
               ) : (
-                <span className="px-4 text-lg text-[#6f4f58]">
+                <span className="px-4 text-base text-[#6f4f58]">
                   Nenhuma foto carregada
                 </span>
               )}
@@ -143,10 +143,10 @@ export default function NewProductPage() {
               />
               <Button
                 asChild
-                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-2xl font-semibold text-white hover:bg-[#be3340]"
+                className="h-auto rounded-2xl bg-[#d63d4c] px-8 py-4 text-base font-semibold text-white hover:bg-[#be3340]"
               >
                 <label htmlFor="product-image-file" className="cursor-pointer">
-                  <Upload className="h-5 w-5" />
+                  <Upload className="h-4 w-4" />
                   Carregar imagem
                 </label>
               </Button>
@@ -154,92 +154,92 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <Label htmlFor="product-marca" className="mb-2 block text-2xl text-[#5a3a42]">
+            <Label htmlFor="product-marca" className="mb-2 block text-lg text-[#5a3a42]">
               Marca
             </Label>
             <Input
               id="product-marca"
-              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-lg"
+              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-xs md:text-xs"
               placeholder="Ex.: Coca Cola"
               aria-invalid={!!errors.marca}
               {...register("marca")}
             />
             {errors.marca ? (
-              <p className="mt-1.5 text-sm text-[#c93b44]">{errors.marca.message}</p>
+              <p className="mt-1.5 text-xs text-[#c93b44]">{errors.marca.message}</p>
             ) : null}
           </div>
 
           <div>
-            <Label htmlFor="product-titulo" className="mb-2 block text-2xl text-[#5a3a42]">
+            <Label htmlFor="product-titulo" className="mb-2 block text-lg text-[#5a3a42]">
               Titulo
             </Label>
             <Input
               id="product-titulo"
-              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-lg"
+              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-xs md:text-xs"
               placeholder="Ex.: Refrigerante Coca Cola 2L"
               aria-invalid={!!errors.titulo}
               {...register("titulo")}
             />
             {errors.titulo ? (
-              <p className="mt-1.5 text-sm text-[#c93b44]">{errors.titulo.message}</p>
+              <p className="mt-1.5 text-xs text-[#c93b44]">{errors.titulo.message}</p>
             ) : null}
           </div>
 
           <div>
             <Label
               htmlFor="product-descricao"
-              className="mb-2 block text-2xl text-[#5a3a42]"
+              className="mb-2 block text-lg text-[#5a3a42]"
             >
               Descricao
             </Label>
             <textarea
               id="product-descricao"
-              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-lg text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
+              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-xs text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
               placeholder="Ex.: Coca cola 2 lt"
               aria-invalid={!!errors.descricao}
               {...register("descricao")}
             />
             {errors.descricao ? (
-              <p className="mt-1.5 text-sm text-[#c93b44]">
+              <p className="mt-1.5 text-xs text-[#c93b44]">
                 {errors.descricao.message}
               </p>
             ) : null}
           </div>
 
           <div>
-            <Label htmlFor="product-valor" className="mb-2 block text-2xl text-[#5a3a42]">
+            <Label htmlFor="product-valor" className="mb-2 block text-lg text-[#5a3a42]">
               Valor
             </Label>
             <Input
               id="product-valor"
               type="text"
               inputMode="decimal"
-              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-lg"
+              className="h-auto rounded-2xl border-[#e2e2e8] bg-white px-4 py-4 text-xs md:text-xs"
               placeholder="Ex.: 9,50"
               aria-invalid={!!errors.valor}
               {...register("valor")}
             />
             {errors.valor ? (
-              <p className="mt-1.5 text-sm text-[#c93b44]">{errors.valor.message}</p>
+              <p className="mt-1.5 text-xs text-[#c93b44]">{errors.valor.message}</p>
             ) : null}
           </div>
 
           <div>
             <Label
               htmlFor="product-conteudo"
-              className="mb-2 block text-2xl text-[#5a3a42]"
+              className="mb-2 block text-lg text-[#5a3a42]"
             >
               Conteudo
             </Label>
             <textarea
               id="product-conteudo"
-              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-lg text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
+              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-xs text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
               placeholder="Ex.: Refrigerante sabor cola"
               aria-invalid={!!errors.conteudo}
               {...register("conteudo")}
             />
             {errors.conteudo ? (
-              <p className="mt-1.5 text-sm text-[#c93b44]">
+              <p className="mt-1.5 text-xs text-[#c93b44]">
                 {errors.conteudo.message}
               </p>
             ) : null}
@@ -248,7 +248,7 @@ export default function NewProductPage() {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-3xl font-semibold text-white hover:bg-[#447b2c]"
+            className="h-auto w-full rounded-2xl bg-[#4f8f31] py-4 text-lg font-semibold text-white hover:bg-[#447b2c]"
           >
             {isSubmitting ? "Cadastrando..." : "Cadastrar produto"}
           </Button>
