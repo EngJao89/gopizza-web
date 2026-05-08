@@ -1,12 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import { useDashboardHeaderToolbar } from "@/components/dashboard/dashboard-header-toolbar-context";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AxiosError } from "axios";
@@ -18,7 +13,7 @@ import {
   type PizzaSize,
 } from "@/lib/pizza-flavors";
 import { toast } from "@/lib/toast";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -54,6 +49,7 @@ function formatDateTime(iso: string | null): string {
 }
 
 export default function PizzaDetailPage() {
+  const { setConfig: setHeaderToolbar } = useDashboardHeaderToolbar();
   const params = useParams();
   const router = useRouter();
   const id = typeof params.id === "string" ? params.id : "";
@@ -67,6 +63,11 @@ export default function PizzaDetailPage() {
   const [quantity, setQuantity] = useState("1");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setHeaderToolbar({ title: "Detalhes da pizza" });
+    return () => setHeaderToolbar(null);
+  }, [setHeaderToolbar]);
 
   useEffect(() => {
     if (!id) {
@@ -193,26 +194,6 @@ export default function PizzaDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#ecebea] pb-8">
-      <div className="px-4 pt-3 md:px-8">
-        <div className="mx-auto max-w-lg">
-          <NavigationMenu viewport={false} className="max-w-none">
-            <NavigationMenuList className="justify-start">
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/dashboard"
-                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#e8e4e2] bg-white text-[#3d2c29] shadow-sm transition hover:bg-[#faf9f9] focus-visible:ring-2 focus-visible:ring-[#c93b44]/30"
-                    aria-label="Voltar ao cardápio"
-                  >
-                    <ChevronLeft className="h-6 w-6" strokeWidth={2.5} />
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-      </div>
-
       <div className="flex justify-center px-4 pb-2 pt-5">
         <div className="relative h-44 w-44 overflow-hidden rounded-full border-4 border-white shadow-lg md:h-52 md:w-52">
           <Image
@@ -229,7 +210,7 @@ export default function PizzaDetailPage() {
 
       <main className="mx-auto mt-2 w-full max-w-lg flex-1 px-4 pt-2">
         <div className="rounded-b-2xl bg-white px-4 pb-8 pt-2 shadow-sm md:px-6">
-          <h1 className="font-serif text-3xl font-semibold text-[#3d2c29] md:text-4xl">
+          <h1 className="font-serif text-2xl font-semibold text-[#3d2c29] md:text-2xl">
             {detail.name}
           </h1>
 
