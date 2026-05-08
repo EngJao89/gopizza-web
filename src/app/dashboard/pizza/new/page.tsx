@@ -88,7 +88,6 @@ export default function NewPizzaPage() {
         form.append("pricePequena", String(basePayload.sizesAndPrices.P));
         form.append("priceMedia", String(basePayload.sizesAndPrices.M));
         form.append("priceGrande", String(basePayload.sizesAndPrices.G));
-        // Repetimos a chave para compatibilidade entre backends.
         form.append("image", imageFile);
         form.append("photo", imageFile);
 

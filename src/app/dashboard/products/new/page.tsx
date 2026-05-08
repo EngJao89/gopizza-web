@@ -154,7 +154,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <Label htmlFor="product-marca" className="mb-2 block text-lg text-[#5a3a42]">
+            <Label htmlFor="product-marca" className="mb-2 block text-base text-[#5a3a42]">
               Marca
             </Label>
             <Input
@@ -170,7 +170,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <Label htmlFor="product-titulo" className="mb-2 block text-lg text-[#5a3a42]">
+            <Label htmlFor="product-titulo" className="mb-2 block text-base text-[#5a3a42]">
               Titulo
             </Label>
             <Input
@@ -188,7 +188,7 @@ export default function NewProductPage() {
           <div>
             <Label
               htmlFor="product-descricao"
-              className="mb-2 block text-lg text-[#5a3a42]"
+              className="mb-2 block text-base text-[#5a3a42]"
             >
               Descricao
             </Label>
@@ -207,7 +207,7 @@ export default function NewProductPage() {
           </div>
 
           <div>
-            <Label htmlFor="product-valor" className="mb-2 block text-lg text-[#5a3a42]">
+            <Label htmlFor="product-valor" className="mb-2 block text-base text-[#5a3a42]">
               Valor
             </Label>
             <Input
@@ -227,7 +227,7 @@ export default function NewProductPage() {
           <div>
             <Label
               htmlFor="product-conteudo"
-              className="mb-2 block text-lg text-[#5a3a42]"
+              className="mb-2 block text-base text-[#5a3a42]"
             >
               Conteudo
             </Label>
