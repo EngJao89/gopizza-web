@@ -138,7 +138,7 @@ export default function NewPizzaPage() {
                   unoptimized
                 />
               ) : (
-                <span className="px-4 text-lg text-[#6f4f58]">Nenhuma foto carregada</span>
+                <span className="px-4 text-sm text-[#6f4f58]">Nenhuma foto carregada</span>
               )}
             </div>
 
@@ -167,7 +167,7 @@ export default function NewPizzaPage() {
           </div>
 
           <div>
-            <Label htmlFor="pizza-name" className="mb-2 block text-2xl text-[#5a3a42]">
+            <Label htmlFor="pizza-name" className="mb-2 block text-base text-[#5a3a42]">
               Nome
             </Label>
             <Input
@@ -183,21 +183,21 @@ export default function NewPizzaPage() {
 
           <div>
             <div className="mb-2 flex items-center justify-between gap-4">
-              <Label htmlFor="pizza-description" className="text-2xl text-[#5a3a42]">
+              <Label htmlFor="pizza-description" className="text-base text-[#5a3a42]">
                 Descricao
               </Label>
-              <span className="text-sm text-[#7c6b70]">Max 60 caracteres</span>
+              <span className="text-xs text-[#7c6b70]">Max 60 caracteres</span>
             </div>
             <textarea
               id="pizza-description"
               maxLength={60}
-              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-lg text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
+              className="min-h-28 w-full rounded-2xl border border-[#e2e2e8] bg-white px-4 py-3 text-xs text-[#3d2c29] outline-none focus:border-[#c93b44] focus:ring-1 focus:ring-[#c93b44]"
               aria-invalid={!!errors.description}
               {...register("description")}
             />
             <div className="mt-1 flex items-center justify-between">
               {errors.description ? (
-                <p className="text-sm text-[#c93b44]">{errors.description.message}</p>
+                <p className="text-xs text-[#c93b44]">{errors.description.message}</p>
               ) : (
                 <span />
               )}
@@ -206,7 +206,7 @@ export default function NewPizzaPage() {
           </div>
 
           <div>
-            <Label className="mb-3 block text-2xl text-[#5a3a42]">Tamanhos e precos</Label>
+            <Label className="mb-3 block text-base text-[#5a3a42]">Tamanhos e precos</Label>
             <div className="space-y-3">
               {(
                 [
@@ -219,17 +219,17 @@ export default function NewPizzaPage() {
                   key={size.key}
                   className="grid grid-cols-[64px_64px_1fr] overflow-hidden rounded-2xl border border-[#e2e2e8]"
                 >
-                  <div className="flex items-center justify-center border-r border-[#e2e2e8] bg-white text-2xl text-[#5a3a42]">
+                  <div className="flex items-center justify-center border-r border-[#e2e2e8] bg-white text-xs text-[#5a3a42]">
                     {size.code}
                   </div>
-                  <div className="flex items-center justify-center border-r border-[#e2e2e8] bg-white text-xl text-[#5a3a42]">
+                  <div className="flex items-center justify-center border-r border-[#e2e2e8] bg-white text-xs text-[#5a3a42]">
                     R$
                   </div>
                   <Input
                     type="text"
                     inputMode="decimal"
                     placeholder="0,00"
-                    className="h-auto rounded-none border-0 bg-white px-4 py-4 text-lg shadow-none focus-visible:ring-0"
+                    className="h-auto rounded-none border-0 bg-white px-4 py-4 text-xs shadow-none focus-visible:ring-0"
                     aria-invalid={!!errors[size.key]}
                     {...register(size.key)}
                   />
